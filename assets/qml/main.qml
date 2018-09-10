@@ -50,24 +50,18 @@ ApplicationWindow {
     //
     // Background control
     //
-    background: Image {
+    background: Rectangle {
         opacity: 0.4
-        source: "qrc:/images/stars.jpg"
-        fillMode: Image.PreserveAspectCrop
+        anchors.fill: parent
+        gradient: Gradient {
+            GradientStop {
+                position: 1
+                color: "#1CB5E0"
+            }
 
-        Rectangle {
-            opacity: 0.8
-            anchors.fill: parent
-            gradient: Gradient {
-                GradientStop {
-                    position: 1
-                    color: "#1CB5E0"
-                }
-
-                GradientStop {
-                    position: 0
-                    color: "#16222A"
-                }
+            GradientStop {
+                position: 0
+                color: "#16222A"
             }
         }
     }

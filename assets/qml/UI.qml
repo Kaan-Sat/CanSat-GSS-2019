@@ -135,7 +135,7 @@ ColumnLayout {
                 radius: width / 2
                 border.color: "#858585"
                 color: CSerialManager.connected ? "#60A917" :
-                                                  CSerialManager.serialDevices.length > 1 ? "#F0A30A" :
+                                                  CSerialManager.serialDevices.length > 1 ? "#FA6800" :
                                                                                             "#E51400"
 
                 Behavior on color { ColorAnimation {} }
