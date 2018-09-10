@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>kaansat.svg</file>
+        <file>stars.jpg</file>
+    </qresource>
+</RCC>
