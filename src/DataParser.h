@@ -70,10 +70,8 @@ public slots:
     void enableCsvLogging(const bool enabled);
 
 private slots:
-    void parsePacket(const QByteArray &data);
-
-private:
     void saveCsvData();
+    void parsePacket(const QByteArray &data);
 
 private:
     quint32 m_crc32;
