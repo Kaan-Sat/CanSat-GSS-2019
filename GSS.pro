@@ -58,12 +58,14 @@ QTPLUGIN += qsvg
 HEADERS += \
     src/AppInfo.h \
     src/DataParser.h \
-    src/SerialManager.h
+    src/SerialManager.h \
+    src/crc32.h
 
 SOURCES += \
     src/DataParser.cpp \
     src/main.cpp \
-    src/SerialManager.cpp
+    src/SerialManager.cpp \
+    src/crc32.c
 
 DISTFILES += \
     assets/qml/Components/ComConsole.qml \

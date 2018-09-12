@@ -47,7 +47,7 @@ ColumnLayout {
 
         Button {
             icon.source: "qrc:/icons/open.svg"
-            onClicked: CSerialManager.openDataFile()
+            onClicked: CSerialManager.openLogFile()
             enabled: CSerialManager.fileLoggingEnabled
         }
     }

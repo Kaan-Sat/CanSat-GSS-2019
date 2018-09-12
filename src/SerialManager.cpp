@@ -121,7 +121,7 @@ QStringList SerialManager::serialDevices() const {
     return m_serialDevices;
 }
 
-void SerialManager::openDataFile() {
+void SerialManager::openLogFile() {
     if (!m_file.fileName().isEmpty() && fileLoggingEnabled())
         QDesktopServices::openUrl(QUrl::fromLocalFile(m_file.fileName()));
 }

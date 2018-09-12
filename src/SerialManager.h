@@ -66,7 +66,7 @@ public:
     QStringList serialDevices() const;
 
 public slots:
-    void openDataFile();
+    void openLogFile();
     void startComm(const int device);
     void enableFileLogging(const bool enabled);
 

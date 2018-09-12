@@ -26,6 +26,7 @@
 #include <QQmlApplicationEngine>
 
 #include "AppInfo.h"
+#include "DataParser.h"
 #include "SerialManager.h"
 
 /**
@@ -44,11 +45,14 @@ int main(int argc, char** argv) {
 
     QGuiApplication app(argc, argv);
 
+    DataParser parser;
     QQmlApplicationEngine engine;
     QQuickStyle::setStyle("Universal");
+
     engine.rootContext()->setContextProperty("AppName", app.applicationName());
     engine.rootContext()->setContextProperty("AppCompany", app.organizationName());
     engine.rootContext()->setContextProperty("AppVersion", app.applicationVersion());
+    engine.rootContext()->setContextProperty("CDataParser", &parser);
     engine.rootContext()->setContextProperty("CSerialManager", SerialManager::getInstance());
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 

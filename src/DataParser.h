@@ -19,3 +19,70 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
+#ifndef DATA_PARSER_H
+#define DATA_PARSER_H
+
+#include <QList>
+#include <QVector>
+#include <QObject>
+#include <QVariant>
+#include <QVector3D>
+
+class DataParser : public QObject {
+    Q_OBJECT
+
+signals:
+    void dataParsed();
+    void packetError();
+    void satelliteReset();
+    void csvLoggingEnabledChanged();
+
+public:
+    DataParser();
+
+    int teamId() const;
+    int packetCount() const;
+    quint64 missionTime() const;
+
+    double altitude() const;
+    double batteryVoltage() const;
+    double relativeHumidity() const;
+    double uvRadiationIndex() const;
+    double internalTemperature() const;
+    double externalTemperature() const;
+    double atmosphericPressure() const;
+
+    QDateTime gpsTime() const;
+    double gpsVelocity() const;
+    double gpsAltitude() const;
+    double gpsLatitude() const;
+    double gpsLongitude() const;
+    int gpsSatelliteCount() const;
+
+    QVector3D gyroscopeData() const;
+    QVector3D accelerometerData() const;
+
+    quint32 checksum() const;
+    bool csvLoggingEnabled() const;
+
+public slots:
+    void enableCsvLogging(const bool enabled);
+
+private slots:
+    void readData (const QString& data);
+    void parsePacket(const QString &packet);
+
+private:
+    void saveCsvData();
+
+private:
+    quint32 m_crc32;
+    QString m_packet;
+    QString m_tempBuffer;
+    QVector<QVariant> m_data;
+
+    bool m_csvLoggingEnabled;
+};
+
+#endif
