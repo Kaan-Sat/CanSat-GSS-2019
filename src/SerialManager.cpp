@@ -30,6 +30,7 @@
 #include <QSerialPortInfo>
 #include <QDesktopServices>
 
+#include "Constants.h"
 #include "SerialManager.h"
 
 /**
@@ -47,7 +48,10 @@ static SerialManager* instance = Q_NULLPTR;
 SerialManager::SerialManager() :
     m_dataLen (-1),
     m_port (Q_NULLPTR),
-    m_enableFileLogging(false) {
+    m_enableFileLogging(false)
+{
+    connect(this, &SerialManager::packetReceived,
+            this, &SerialManager::formatReceivedPacket);
     connect(this, &SerialManager::connectionChanged,
             this, &SerialManager::configureLogFile);
 
@@ -62,8 +66,8 @@ SerialManager::~SerialManager() {
     if (m_port != Q_NULLPTR)
         m_port->close();
 
-    if (m_file.isOpen())
-        m_file.close();
+    if (m_packetLog.isOpen())
+        m_packetLog.close();
 }
 
 /**
@@ -84,11 +88,9 @@ SerialManager* SerialManager::getInstance() {
  *          device, otherwise, this function shall return @c false
  */
 bool SerialManager::connected() const  {
-    // Return connection status with current serial port
     if (m_port != Q_NULLPTR)
         return m_port->isOpen();
 
-    // Port is closed/invalid
     return false;
 }
 
@@ -105,11 +107,9 @@ bool SerialManager::fileLoggingEnabled() const {
  *          received from the current serial device.
  */
 QString SerialManager::receivedBytes() const {
-    // Only return received/saved bytes if port is open
     if (m_port != Q_NULLPTR && m_dataLen >= 0)
         return sizeStr(m_dataLen);
 
-    // Return 0 bytes if above conditions are not met
     return "0 " + tr("bytes");
 }
 
@@ -122,8 +122,8 @@ QStringList SerialManager::serialDevices() const {
 }
 
 void SerialManager::openLogFile() {
-    if (!m_file.fileName().isEmpty() && fileLoggingEnabled())
-        QDesktopServices::openUrl(QUrl::fromLocalFile(m_file.fileName()));
+    if (packetLogAvailable())
+        QDesktopServices::openUrl(QUrl::fromLocalFile(m_packetLog.fileName()));
 }
 
 void SerialManager::startComm(const int device) {
@@ -172,13 +172,12 @@ void SerialManager::enableFileLogging(const bool enabled) {
     // Update file logging setting
     m_enableFileLogging = enabled;
 
-    // New value is different than previous value, open or close the
-    // log file
+    // New value is different than previous value, open or close the log file
     if (previousValue != enabled) {
         if (enabled)
             configureLogFile();
-        else if (m_file.isOpen())
-            m_file.close();
+        else if (m_packetLog.isOpen())
+            m_packetLog.close();
     }
 
     // Update UI
@@ -192,42 +191,33 @@ void SerialManager::onDataReceived() {
 
     // Read incoming data
     m_dataLen += m_port->bytesAvailable();
-    QString data = QString::fromUtf8(m_port->readAll());
+    m_buffer.append(m_port->readAll());
 
-    // Check if we received EOL character, if so, alert UI and write to
-    // log file
-    m_buffer.append(data);
-    if (m_buffer.contains(QChar('\n'))) {
-        QStringList lines = m_buffer.split ("\n");
-        foreach (QString line, lines)
-            if (!line.isEmpty()) {
-                // Get current time
-                QString time = QDateTime::currentDateTime().toString("hh:mm:ss");
+    // Buffer contains EOT byte, which represents a packet
+    if (m_buffer.contains(EOT_PRIMARY.toLatin1())) {
+        // We could have received part of the next packet - or more than one
+        // packet - so we split the data into packets to read each one
+        // separately.
+        QList<QByteArray> packets = m_buffer.split(EOT_PRIMARY.toLatin1());
 
-                // Add timestamp and line data
-                QString format = QString("<font face=\"hack\">"
-                                         "<font face=\"hack\" color=\"#bebebe\">"
-                                         "[%1]</font>&nbsp;"
-                                         "<xmp>%2</xmp></font><br/>")
-                        .arg(time, line);
+        // Check if last packet is complete or not
+        if (m_buffer.endsWith(EOT_PRIMARY.toLatin1()))
+            m_buffer.clear();
+        else {
+            m_buffer = packets.last();
+            packets.removeLast();
+        }
 
-                // Write received data to log file
-                if (fileLoggingEnabled() && !m_file.fileName().isEmpty()) {
-                    if (m_file.open(QFile::Append)) {
-                        m_file.write(format.toUtf8());
-                        m_file.close();
-                    }
-                }
-
-                // Update UI
-                emit newLineReceived(format);
-            }
-
-        m_buffer = lines.last();
+        // Read each packet separately
+        foreach (QByteArray packet, packets) {
+            if (!packet.isEmpty())
+                emit packetReceived(packet);
+        }
     }
 
-    // Send data to UI and other app modules
-    emit dataReceived(data);
+    // Ensure that buffer stays withing size limits
+    if (m_buffer.size() > MAX_BUFFER_SIZE)
+        m_buffer.clear();
 }
 
 /**
@@ -269,18 +259,18 @@ void SerialManager::disconnectDevice() {
 
 void SerialManager::configureLogFile() {
     // Close log file
-    if (m_file.isOpen())
-        m_file.close();
+    if (m_packetLog.isOpen())
+        m_packetLog.close();
 
     // Serial device is invalid, abort
     if (!m_port) {
-        m_file.setFileName("");
+        m_packetLog.setFileName("");
         return;
     }
 
     // Serial device is not open, abort
     if (!m_port->isOpen()) {
-        m_file.setFileName("");
+        m_packetLog.setFileName("");
         return;
     }
 
@@ -302,11 +292,11 @@ void SerialManager::configureLogFile() {
         dir.mkpath(".");
 
     // Open file
-    m_file.setFileName(dir.filePath(fileName));
-    if (!m_file.open(QFile::WriteOnly))
-        qWarning() << "Cannot open" << m_file.fileName() << "for writting";
+    m_packetLog.setFileName(dir.filePath(fileName));
+    if (!m_packetLog.open(QFile::WriteOnly))
+        qWarning() << "Cannot open" << m_packetLog.fileName() << "for writting";
     else
-        m_file.close();
+        m_packetLog.close();
 }
 
 void SerialManager::refreshSerialDevices() {
@@ -330,23 +320,54 @@ void SerialManager::refreshSerialDevices() {
     QTimer::singleShot(1000, this, &SerialManager::refreshSerialDevices);
 }
 
+void SerialManager::formatReceivedPacket(const QByteArray& packet) {
+    // Do not take into account empty packets
+    if (packet.isEmpty())
+        return;
+
+    // Get current time
+    QString tm = QDateTime::currentDateTime().toString("hh:mm:ss::zzz");
+
+    // Add timestamp and line data
+    QString format = QString("<font face=\"hack\">"
+                             "<font face=\"hack\" color=\"#bbb\">"
+                             "[%1]</font>&nbsp;"
+                             "<xmp>%2</xmp></font><br/>")
+            .arg(tm, QString::fromUtf8(packet));
+
+    // Write received data to log file
+    if (packetLogAvailable()) {
+        if (m_packetLog.open(QFile::Append)) {
+            m_packetLog.write(format.toUtf8());
+            m_packetLog.close();
+        }
+    }
+
+    // Notify application
+    emit packetLogged(format);
+}
+
+bool SerialManager::packetLogAvailable() const {
+    return !m_packetLog.fileName().isEmpty() && fileLoggingEnabled();
+}
+
 QString SerialManager::sizeStr(const qint64 bytes) const {
     QString units;
-    double len = bytes;
+    double size = bytes;
 
-    if (len < 1024)
+    if (size < 1024)
         units = " " + tr("bytes");
 
-    else if (len < pow(1024, 2)) {
-        len /= 1024;
+    else if (size < pow(1024, 2)) {
+        size /= 1024.0;
         units = " " + tr("KB");
     }
 
     else {
-        len /= pow(1024, 2);
+        size /= pow(1024, 2);
         units = " " + tr("MB");
     }
 
-    double num = floorl(len * 100 + 0.5) / 100.0;
-    return QString::number(num) + units;
+    double rounded = static_cast<double>(floorl(static_cast<long double>(size) * 100)) / 100;
+    return QString::number(rounded) + units;
 }

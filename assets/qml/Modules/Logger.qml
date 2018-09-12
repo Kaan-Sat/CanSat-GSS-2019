@@ -60,7 +60,7 @@ ColumnLayout {
 
         Connections {
             target: CSerialManager
-            onNewLineReceived: terminal.append(data)
+            onPacketLogged: terminal.append(data)
         }
     }
 

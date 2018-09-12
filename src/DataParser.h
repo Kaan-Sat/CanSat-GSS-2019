@@ -70,18 +70,14 @@ public slots:
     void enableCsvLogging(const bool enabled);
 
 private slots:
-    void readData (const QString& data);
-    void parsePacket(const QString &packet);
+    void parsePacket(const QByteArray &data);
 
 private:
     void saveCsvData();
 
 private:
     quint32 m_crc32;
-    QString m_packet;
-    QString m_tempBuffer;
     QVector<QVariant> m_data;
-
     bool m_csvLoggingEnabled;
 };
 

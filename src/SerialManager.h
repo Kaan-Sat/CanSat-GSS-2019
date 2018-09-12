@@ -38,7 +38,7 @@ class SerialManager : public QObject {
                NOTIFY fileLoggingEnabledChanged)
     Q_PROPERTY(QString receivedBytes
                READ receivedBytes
-               NOTIFY dataReceived)
+               NOTIFY packetReceived)
     Q_PROPERTY(QStringList serialDevices
                READ serialDevices
                NOTIFY serialDevicesChanged)
@@ -47,8 +47,8 @@ signals:
     void connectionChanged();
     void serialDevicesChanged();
     void fileLoggingEnabledChanged();
-    void dataReceived(const QString& data);
-    void newLineReceived(const QString& data);
+    void packetLogged(const QString& data);
+    void packetReceived(const QByteArray& data);
     void connectionError(const QString& deviceName);
     void connectionSuccess(const QString& deviceName);
 
@@ -75,14 +75,16 @@ private slots:
     void disconnectDevice();
     void configureLogFile();
     void refreshSerialDevices();
+    void formatReceivedPacket(const QByteArray& data);
 
 private:
+    bool packetLogAvailable() const;
     QString sizeStr(const qint64 bytes) const;
 
 private:
-    QFile m_file;
+    QFile m_packetLog;
     qint64 m_dataLen;
-    QString m_buffer;
+    QByteArray m_buffer;
     QSerialPort* m_port;
     QStringList m_serialDevices;
 
