@@ -27,36 +27,48 @@
 #include <QObject>
 
 class QSerialPort;
-
 class SerialManager : public QObject {
     Q_OBJECT
-
-    Q_PROPERTY (bool connected
-                READ connected
-                NOTIFY connectionChanged)
-    Q_PROPERTY (QString receivedBytes
-                READ receivedBytes
-                NOTIFY dataReceived)
-    Q_PROPERTY (QStringList serialDevices
-                READ serialDevices
-                NOTIFY serialDevicesChanged)
+    Q_PROPERTY(bool connected
+               READ connected
+               NOTIFY connectionChanged)
+    Q_PROPERTY(bool fileLoggingEnabled
+               READ fileLoggingEnabled
+               WRITE enableFileLogging
+               NOTIFY fileLoggingEnabledChanged)
+    Q_PROPERTY(QString receivedBytes
+               READ receivedBytes
+               NOTIFY dataReceived)
+    Q_PROPERTY(QStringList serialDevices
+               READ serialDevices
+               NOTIFY serialDevicesChanged)
 
 signals:
     void connectionChanged();
     void serialDevicesChanged();
-    void dataReceived (const QString& data);
-    void connectionError (const QString& deviceName);
-    void connectionSuccess (const QString& deviceName);
+    void fileLoggingEnabledChanged();
+    void dataReceived(const QString& data);
+    void newLineReceived(const QString& data);
+    void connectionError(const QString& deviceName);
+    void connectionSuccess(const QString& deviceName);
+
+private:
+    SerialManager();
+    ~SerialManager();
 
 public:
     static SerialManager* getInstance();
+
     bool connected() const;
+    bool fileLoggingEnabled() const;
+
     QString receivedBytes() const;
     QStringList serialDevices() const;
 
 public slots:
     void openDataFile();
-    void startComm (const int device);
+    void startComm(const int device);
+    void enableFileLogging(const bool enabled);
 
 private slots:
     void onDataReceived();
@@ -65,14 +77,16 @@ private slots:
     void refreshSerialDevices();
 
 private:
-    SerialManager();
-    ~SerialManager();
-    QString sizeStr (const quint64 bytes) const;
+    QString sizeStr(const qint64 bytes) const;
 
 private:
     QFile m_file;
+    qint64 m_dataLen;
+    QString m_buffer;
     QSerialPort* m_port;
     QStringList m_serialDevices;
+
+    bool m_enableFileLogging;
 };
 
 #endif

@@ -28,21 +28,29 @@
 #include "AppInfo.h"
 #include "SerialManager.h"
 
-int main (int argc, char** argv) {
-    QGuiApplication::setApplicationName (APP_NAME);
-    QGuiApplication::setApplicationVersion (APP_VERSION);
-    QGuiApplication::setOrganizationName (ORGANIZATION_NAME);
-    QGuiApplication::setAttribute (Qt::AA_EnableHighDpiScaling);
+/**
+ * @brief Entry-point function of the application
+ *
+ * @param argc argument count
+ * @param argv argument string array
+ *
+ * @returns the exit status of the @c qApp event loop
+ */
+int main(int argc, char** argv) {
+    QGuiApplication::setApplicationName(APP_NAME);
+    QGuiApplication::setApplicationVersion(APP_VERSION);
+    QGuiApplication::setOrganizationName(ORGANIZATION_NAME);
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-    QGuiApplication app (argc, argv);
+    QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
-    QQuickStyle::setStyle ("Universal");
-    engine.rootContext()->setContextProperty ("AppName", app.applicationName());
-    engine.rootContext()->setContextProperty ("AppCompany", app.organizationName());
-    engine.rootContext()->setContextProperty ("AppVersion", app.applicationVersion());
-    engine.rootContext()->setContextProperty ("CSerialManager", SerialManager::getInstance());
-    engine.load (QUrl (QStringLiteral ("qrc:/qml/main.qml")));
+    QQuickStyle::setStyle("Universal");
+    engine.rootContext()->setContextProperty("AppName", app.applicationName());
+    engine.rootContext()->setContextProperty("AppCompany", app.organizationName());
+    engine.rootContext()->setContextProperty("AppVersion", app.applicationVersion());
+    engine.rootContext()->setContextProperty("CSerialManager", SerialManager::getInstance());
+    engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
     if (engine.rootObjects().isEmpty())
         return EXIT_FAILURE;

@@ -20,6 +20,8 @@
  * THE SOFTWARE.
  */
 
+#include <cmath>
+
 #include <QDir>
 #include <QFile>
 #include <QTimer>
@@ -30,70 +32,101 @@
 
 #include "SerialManager.h"
 
+/**
+ * @brief Pointer to the only instance of this class.
+ *
+ * We need to use a single-instance approach so that all application modules
+ * and classes can communicate and use the current serial device without dealing
+ * with permission and/or race issues.
+ */
 static SerialManager* instance = Q_NULLPTR;
 
-SerialManager::SerialManager() {
-    // Ensure that we do not have issues with the serial port pointer
-    m_port = Q_NULLPTR;
+/**
+ * @brief Constructor for the @a SerialManager class
+ */
+SerialManager::SerialManager() :
+    m_dataLen (-1),
+    m_port (Q_NULLPTR),
+    m_enableFileLogging(false) {
+    connect(this, &SerialManager::connectionChanged,
+            this, &SerialManager::configureLogFile);
 
-    // Search for new serial devices
-    refreshSerialDevices();
-
-    // Create/close log file when the connection state with a serial device is
-    // changed
-    connect (this, SIGNAL(connectionChanged()), this, SLOT(configureLogFile()));
+    QTimer::singleShot(500, this, &SerialManager::refreshSerialDevices);
 }
 
+/**
+ * @brief Closes the comm. channels with the current device and closes
+ *        the current log file
+ */
 SerialManager::~SerialManager() {
-    // Close serial device comm. channel
-    if (m_port)
+    if (m_port != Q_NULLPTR)
         m_port->close();
 
-    // Close log file
     if (m_file.isOpen())
         m_file.close();
 }
 
+/**
+ * @returns The only instance of the @c SerialManager class, we need
+ *          to have only one instance for every application module to
+ *          interface with the same serial device without getting into
+ *          permission issues or using additional resources
+ */
 SerialManager* SerialManager::getInstance() {
-    // This is the first time that the program calls this function,
-    // create a new instance of the class
     if (instance == Q_NULLPTR)
         instance = new SerialManager();
 
-    // Return instance pointer
     return instance;
 }
 
+/**
+ * @returns @c true if the application is connected to any serial
+ *          device, otherwise, this function shall return @c false
+ */
 bool SerialManager::connected() const  {
     // Return connection status with current serial port
-    if (m_port)
+    if (m_port != Q_NULLPTR)
         return m_port->isOpen();
 
     // Port is closed/invalid
     return false;
 }
 
-QString SerialManager::receivedBytes() const {
-    // Only return received/saved bytes if port is open and file exists
-    if (m_port) {
-        if (!m_file.fileName().isEmpty() && m_port->isOpen())
-            return sizeStr (m_file.size());
-    }
-
-    // Return 0 bytes if above conditions are not met
-    return "0 " + tr ("bytes");
+/**
+ * @returns @c true if the class will save all inconming data in a nice HTML
+ *          formatted file with received data and timestamps
+ */
+bool SerialManager::fileLoggingEnabled() const {
+    return m_enableFileLogging;
 }
 
+/**
+ * @returns An user-friendly string that represents the number of bytes
+ *          received from the current serial device.
+ */
+QString SerialManager::receivedBytes() const {
+    // Only return received/saved bytes if port is open
+    if (m_port != Q_NULLPTR && m_dataLen >= 0)
+        return sizeStr(m_dataLen);
+
+    // Return 0 bytes if above conditions are not met
+    return "0 " + tr("bytes");
+}
+
+/**
+ * @returns A list with the port names (such as COM1, COM2, ttyACMO) of the
+ *          ports that have any serial device connected to them
+ */
 QStringList SerialManager::serialDevices() const {
     return m_serialDevices;
 }
 
 void SerialManager::openDataFile() {
     if (!m_file.fileName().isEmpty())
-        QDesktopServices::openUrl (QUrl::fromLocalFile (m_file.fileName()));
+        QDesktopServices::openUrl(QUrl::fromLocalFile(m_file.fileName()));
 }
 
-void SerialManager::startComm (const int device) {
+void SerialManager::startComm(const int device) {
     // Disconnect current serial port device
     disconnectDevice();
 
@@ -106,17 +139,19 @@ void SerialManager::startComm (const int device) {
         // Check if port ID is valid
         if (portId < ports.count()) {
             // Configure new serial port device
-            m_port = new QSerialPort (ports.at (portId));
-            m_port->setBaudRate (9600);
+            m_port = new QSerialPort(ports.at(portId));
+            m_port->setBaudRate(9600);
 
             // Connect signals/slots
-            connect (m_port, SIGNAL (readyRead()), this, SLOT (onDataReceived()));
-            connect (m_port, SIGNAL (aboutToClose()), this, SLOT (disconnectDevice()));
+            connect(m_port, SIGNAL(readyRead()),
+                    this,     SLOT(onDataReceived()));
+            connect(m_port, SIGNAL(aboutToClose()),
+                    this,     SLOT(disconnectDevice()));
 
             // Try to open the serial port device
-            if (m_port->open (QIODevice::ReadOnly)) {
+            if (m_port->open(QIODevice::ReadOnly)) {
                 emit connectionChanged();
-                emit connectionSuccess (m_port->portName());
+                emit connectionSuccess(m_port->portName());
             }
 
             // There was an error opening the serial port device
@@ -126,8 +161,28 @@ void SerialManager::startComm (const int device) {
 
         // Port ID is invalid
         else
-            emit connectionError ("Invalid");
+            emit connectionError("Invalid");
     }
+}
+
+void SerialManager::enableFileLogging(const bool enabled) {
+    // Save previous value
+    bool previousValue = fileLoggingEnabled();
+
+    // Update file logging setting
+    m_enableFileLogging = enabled;
+
+    // New value is different than previous value, open or close the
+    // log file
+    if (previousValue != enabled) {
+        if (enabled)
+            configureLogFile();
+        else if (m_file.isOpen())
+            m_file.close();
+    }
+
+    // Update UI
+    emit fileLoggingEnabledChanged();
 }
 
 void SerialManager::onDataReceived() {
@@ -136,16 +191,41 @@ void SerialManager::onDataReceived() {
         return;
 
     // Read incoming data
-    QString data = QString::fromUtf8 (m_port->readAll());
+    m_dataLen += m_port->bytesAvailable();
+    QString data = QString::fromUtf8(m_port->readAll());
 
-    // Write received data to log file
-    if (m_file.open (QFile::Append)) {
-        m_file.write (data.toUtf8());
-        m_file.close();
+    // Check if we received EOL character, if so, alert UI and write to
+    // log file
+    m_buffer.append(data);
+    if (m_buffer.contains(QChar('\n'))) {
+        QStringList lines = m_buffer.split ("\n");
+        foreach (QString line, lines)
+            if (!line.isEmpty()) {
+                // Get current time
+                QString time = QDateTime::currentDateTime().toString("hh:mm:ss");
+
+                // Add timestamp and line data
+                QString format = QString("<font face=\"hack\">"
+                                         "<font face=\"hack\" color=\"#bebebe\">"
+                                         "[%1]</font>&nbsp;"
+                                         "<xmp>%2</xmp></font><br/>")
+                        .arg(time, line);
+
+                // Write received data to log file
+                if (m_file.open(QFile::Append) && fileLoggingEnabled()) {
+                    m_file.write(format.toUtf8());
+                    m_file.close();
+                }
+
+                // Update UI
+                emit newLineReceived(format);
+            }
+
+        m_buffer = lines.last();
     }
 
     // Send data to UI and other app modules
-    emit dataReceived (data);
+    emit dataReceived(data);
 }
 
 /**
@@ -157,14 +237,17 @@ void SerialManager::onDataReceived() {
  *     - Disconnect serial device signals/slots to the SerialManager
  */
 void SerialManager::disconnectDevice() {
+    // Reset byte counter
+    m_dataLen = -1;
+
     // Check if serial port pointer is valid
-    if (m_port) {
+    if (m_port != Q_NULLPTR) {
         // Get serial port name
         QString name = m_port->portName();
 
         // Disconnect signals/slots of serial port
-        m_port->disconnect (this, SLOT (onDataReceived()));
-        m_port->disconnect (this, SLOT (disconnectDevice()));
+        m_port->disconnect(this, SLOT(onDataReceived()));
+        m_port->disconnect(this, SLOT(disconnectDevice()));
 
         // Close and delete the serial port
         m_port->close();
@@ -173,9 +256,9 @@ void SerialManager::disconnectDevice() {
         // Reset pointer
         m_port = Q_NULLPTR;
 
-        // Warn user (if serial port was valid)
+        // Warn user(if serial port was valid)
         if (!name.isEmpty())
-            emit connectionError (name);
+            emit connectionError(name);
     }
 
     // Update UI
@@ -189,32 +272,36 @@ void SerialManager::configureLogFile() {
 
     // Serial device is invalid, abort
     if (!m_port) {
-        m_file.setFileName ("");
+        m_file.setFileName("");
         return;
     }
 
     // Serial device is not open, abort
     if (!m_port->isOpen()) {
-        m_file.setFileName ("");
+        m_file.setFileName("");
         return;
     }
 
+    // File logging disabled
+    if (!fileLoggingEnabled())
+        return;
+
     // Get file name and path
-    QString format = QDateTime::currentDateTime().toString ("yyyy/MMM/dd/");
-    QString fileName = QDateTime::currentDateTime().toString("HH-mm-ss") + ".log";
-    QString path = QString ("%1/.%2/%3/%4").arg (QDir::homePath(),
-                                                 qApp->applicationName(),
-                                                 m_port->portName(),
-                                                 format);
+    QString format = QDateTime::currentDateTime().toString("yyyy/MMM/dd/");
+    QString fileName = QDateTime::currentDateTime().toString("HH-mm-ss") + ".html";
+    QString path = QString("%1/.%2/%3/%4").arg(QDir::homePath(),
+                                               qApp->applicationName(),
+                                               m_port->portName(),
+                                               format);
 
     // Generate file path if required
-    QDir dir (path);
+    QDir dir(path);
     if (!dir.exists())
-        dir.mkpath (".");
+        dir.mkpath(".");
 
     // Open file
-    m_file.setFileName (dir.filePath (fileName));
-    if (!m_file.open (QFile::WriteOnly))
+    m_file.setFileName(dir.filePath(fileName));
+    if (!m_file.open(QFile::WriteOnly))
         qWarning() << "Cannot open" << m_file.fileName() << "for writting";
     else
         m_file.close();
@@ -223,12 +310,12 @@ void SerialManager::configureLogFile() {
 void SerialManager::refreshSerialDevices() {
     // Create list starting with invalid virtual device
     QStringList devices;
-    devices.append (tr ("Select Port"));
+    devices.append(tr("Select Port"));
 
     // Search for serail devices
-    foreach (QSerialPortInfo port, QSerialPortInfo::availablePorts()) {
+    foreach(QSerialPortInfo port, QSerialPortInfo::availablePorts()) {
         if (port.isValid() && !port.description().isEmpty())
-            devices.append (port.portName());
+            devices.append(port.portName());
     }
 
     // If the obtained list is different from previous list, update UI
@@ -238,25 +325,26 @@ void SerialManager::refreshSerialDevices() {
     }
 
     // Call this function again in one second
-    QTimer::singleShot (1000, this, &SerialManager::refreshSerialDevices);
+    QTimer::singleShot(1000, this, &SerialManager::refreshSerialDevices);
 }
 
-QString SerialManager::sizeStr (const quint64 bytes) const {
+QString SerialManager::sizeStr(const qint64 bytes) const {
     QString units;
-    float len = bytes;
+    double len = bytes;
 
     if (len < 1024)
-        units = " " + tr ("bytes");
+        units = " " + tr("bytes");
 
-    else if (len < pow (1024, 2)) {
+    else if (len < pow(1024, 2)) {
         len /= 1024;
-        units = " " + tr ("KB");
+        units = " " + tr("KB");
     }
 
     else {
-        len /= pow (1024, 2);
-        units = " " + tr ("MB");
+        len /= pow(1024, 2);
+        units = " " + tr("MB");
     }
 
-    return QString::number (floorf (len * 100 + 0.5) / 100) + units;
+    double num = floorl(len * 100 + 0.5) / 100.0;
+    return QString::number(num) + units;
 }

@@ -39,31 +39,19 @@ ApplicationWindow {
     width: 800
     height: 600
     visible: true
-    title: AppName + " - " + AppVersion
+    title: AppName
 
     //
     // Theme options
     //
     Universal.theme: Universal.Dark
-    Universal.accent: Universal.Orange
+    Universal.accent: Universal.Steel
 
     //
-    // Background control
+    // Set background color
     //
     background: Rectangle {
-        opacity: 0.4
-        anchors.fill: parent
-        gradient: Gradient {
-            GradientStop {
-                position: 1
-                color: "#1CB5E0"
-            }
-
-            GradientStop {
-                position: 0
-                color: "#16222A"
-            }
-        }
+        color: "#212121"
     }
 
     //

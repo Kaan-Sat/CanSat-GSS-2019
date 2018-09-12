@@ -109,37 +109,11 @@ ColumnLayout {
         //
         // Serial port selector
         //
-        RowLayout {
-            spacing: app.spacing
-
-            //
-            // Port selector
-            //
-            ComboBox {
-                id: devices
-                model: CSerialManager.serialDevices
-                enabled: CSerialManager.serialDevices.length > 1
-                onCurrentIndexChanged: CSerialManager.startComm (currentIndex)
-            }
-
-            //
-            // Indicator, posible status(es) are:
-            //    - Green: connected to serial device
-            //    - Yellow: serial devices are available
-            //    - Red: no serial devices are found/available
-            //
-            Rectangle {
-                width: 24
-                height: width
-                border.width: 1
-                radius: width / 2
-                border.color: "#858585"
-                color: CSerialManager.connected ? "#60A917" :
-                                                  CSerialManager.serialDevices.length > 1 ? "#FA6800" :
-                                                                                            "#E51400"
-
-                Behavior on color { ColorAnimation {} }
-            }
+        ComboBox {
+            id: devices
+            model: CSerialManager.serialDevices
+            enabled: CSerialManager.serialDevices.length > 1
+            onCurrentIndexChanged: CSerialManager.startComm(currentIndex)
         }
     }
 
@@ -188,7 +162,7 @@ ColumnLayout {
         //
         // Set min. width to 320 pixels
         //
-        width: Math.max (implicitWidth, 320)
+        width: Math.max(implicitWidth, 320)
 
         //
         // Used to select <None> after the user closes
@@ -217,10 +191,17 @@ ColumnLayout {
         Connections {
             target: CSerialManager
 
+            onConnectionSuccess: {
+                dialog.error = false
+                dialog.title = qsTr("Information")
+                description.text = qsTr("Connected to \"%1\"").arg(deviceName)
+                dialog.open()
+            }
+
             onConnectionError: {
                 dialog.error = true
-                dialog.title = qsTr ("Warning")
-                description.text = qsTr ("Disconnected from device at \"%1\"").arg (deviceName)
+                dialog.title = qsTr("Warning")
+                description.text = qsTr("Disconnected from \"%1\"").arg(deviceName)
                 dialog.open()
             }
         }

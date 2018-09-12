@@ -30,19 +30,18 @@ Item {
     // Custom properties
     //
     property int scrollback: 100
-    property alias text: textArea.text
-    property alias textContainer: textArea
-    property alias autoScroll: autoScrollCheckbox.checked
+    property bool autoScroll: true
+    property alias text: _textDisplay.text
+    property alias textContainer: _textDisplay
 
     //
     // Appends the given string to the text and scrolls
     // the view to the bottom
     //
-    function append (str) {
+    function append(str) {
         text += str
-
         if (autoScroll)
-            textContainer.cursorPosition = text.length
+            textContainer.cursorPosition = textContainer.length
     }
 
     //
@@ -53,73 +52,27 @@ Item {
     }
 
     //
-    // Removes previous lines to avoid running out of RAM
+    // Removes previous lines to avoid running out of RAM and removes
+    // text that only consists of spaces
     //
     onTextChanged: {
         if (textContainer.lineCount > scrollback)
-            text = text.split ("\n").slice (1).join ("\n")
+            clear()
     }
 
     //
-    // Widgets
+    // Text display
     //
-    ColumnLayout {
+    ScrollView {
         anchors.fill: parent
 
-        //
-        // Control widgets
-        //
-        RowLayout {
-            Layout.fillWidth: true
-
-            CheckBox {
-                checked: true
-                id: autoScrollCheckbox
-                text: qsTr ("Auto-scroll")
-            }
-
-            Item {
-                Layout.fillWidth: true
-            }
-
-            Button {
-                onClicked: clear()
-                icon.source: "qrc:/icons/clear.svg"
-            }
-
-            Button {
-                icon.source: "qrc:/icons/open.svg"
-                onClicked: CSerialManager.openDataFile()
-            }
+        TextArea {
+            id: _textDisplay
+            readOnly: true
+            color: "#72d5a3"
+            anchors.fill: parent
+            textFormat: TextArea.RichText
+            placeholderText: qsTr("No data received so far") + "..."
         }
-
-        //
-        // Text widget
-        //
-        RowLayout {
-            ScrollView {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-
-                TextArea {
-                    id: textArea
-                    readOnly: true
-                    font.family: "Hack"
-                    anchors.fill: parent
-                    color: Universal.accent
-                }
-            }
-        }
-    }
-
-    //
-    // Place holder label
-    //
-    Label {
-        font.bold: true
-        font.pixelSize: 18
-        anchors.centerIn: parent
-        visible: textArea.text.length == 0
-        text: qsTr ("No data received so far") + "..."
     }
 }

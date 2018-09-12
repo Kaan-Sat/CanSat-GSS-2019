@@ -27,20 +27,46 @@ import QtQuick.Controls 2.0
 import "../Components"
 
 ColumnLayout {
+    RowLayout {
+        Layout.fillWidth: true
+
+        CheckBox {
+            checked: true
+            id: autoScrollCheck
+            text: qsTr("Auto-scroll")
+        }
+
+        Item {
+            Layout.fillWidth: true
+        }
+
+        Button {
+            onClicked: terminal.clear()
+            icon.source: "qrc:/icons/clear.svg"
+        }
+
+        Button {
+            icon.source: "qrc:/icons/open.svg"
+            onClicked: CSerialManager.openDataFile()
+            enabled: CSerialManager.fileLoggingEnabled
+        }
+    }
+
     Terminal {
         id: terminal
         Layout.fillWidth: true
         Layout.fillHeight: true
+        autoScroll: autoScrollCheck.checked
 
         Connections {
             target: CSerialManager
-            onDataReceived: terminal.append (data)
+            onNewLineReceived: terminal.append(data)
         }
     }
 
     Label {
         Layout.alignment: Qt.AlignLeft
-        text: qsTr ("Data received: %1").arg (CSerialManager.receivedBytes)
+        text: qsTr("Data received: %1").arg(CSerialManager.receivedBytes)
     }
 }
 

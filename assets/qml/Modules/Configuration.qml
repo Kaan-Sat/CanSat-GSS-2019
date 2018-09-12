@@ -34,7 +34,7 @@ ColumnLayout {
 
         Label {
             font.pixelSize: 24
-            text: qsTr ("Settings")
+            text: qsTr("Settings")
         }
 
         Item {
@@ -42,7 +42,7 @@ ColumnLayout {
         }
 
         Button {
-            text: qsTr ("Reset")
+            text: qsTr("Reset")
             icon.source: "qrc:/icons/reset.svg"
         }
     }
@@ -69,7 +69,7 @@ ColumnLayout {
                 columnSpacing: app.spacing
 
                 Label {
-                    text: qsTr ("Baud Rate")
+                    text: qsTr("Baud Rate")
                 } ComboBox {
                     currentIndex: 3
                     model: [
@@ -85,30 +85,30 @@ ColumnLayout {
                 }
 
                 Label {
-                    text: qsTr ("Data Bits")
+                    text: qsTr("Data Bits")
                 } ComboBox {
                     model: [ 5, 6, 7, 8]
                 }
 
                 Label {
-                    text: qsTr ("Parity")
+                    text: qsTr("Parity")
                 } ComboBox {
                     model: [
-                        qsTr ("No Parity"),
-                        qsTr ("Even Parity"),
-                        qsTr ("Odd Parity"),
-                        qsTr ("Space Parity"),
-                        qsTr ("Mark Parity"),
+                        qsTr("No Parity"),
+                        qsTr("Even Parity"),
+                        qsTr("Odd Parity"),
+                        qsTr("Space Parity"),
+                        qsTr("Mark Parity"),
                     ]
                 }
 
                 Label {
-                    text: qsTr ("Stop Bits")
+                    text: qsTr("Stop Bits")
                 } ComboBox {
                     model: [
-                        qsTr ("One Stop"),
-                        qsTr ("One and Half Stop"),
-                        qsTr ("Two Stop")
+                        qsTr("One Stop"),
+                        qsTr("One and Half Stop"),
+                        qsTr("Two Stop")
                     ]
                 }
             }
@@ -119,18 +119,19 @@ ColumnLayout {
                 Layout.fillHeight: true
 
                 CheckBox {
-                    checked: true
-                    text: qsTr ("Save received data to disk")
+                    text: qsTr("Save received data to disk")
+                    checked: CSerialManager.fileLoggingEnabled
+                    onCheckedChanged: CSerialManager.fileLoggingEnabled = checked
                 }
 
                 CheckBox {
                     checked: true
-                    text: qsTr ("Save sensor readings to CSV file")
+                    text: qsTr("Save sensor readings to CSV file")
                 }
 
                 CheckBox {
                     checked: false
-                    text: qsTr ("Full-Screen UI")
+                    text: qsTr("Full-Screen UI")
                     onCheckedChanged: {
                         if (checked)
                             app.showFullScreen()
