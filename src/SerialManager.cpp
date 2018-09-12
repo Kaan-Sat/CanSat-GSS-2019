@@ -122,7 +122,7 @@ QStringList SerialManager::serialDevices() const {
 }
 
 void SerialManager::openDataFile() {
-    if (!m_file.fileName().isEmpty())
+    if (!m_file.fileName().isEmpty() && fileLoggingEnabled())
         QDesktopServices::openUrl(QUrl::fromLocalFile(m_file.fileName()));
 }
 
@@ -130,7 +130,7 @@ void SerialManager::startComm(const int device) {
     // Disconnect current serial port device
     disconnectDevice();
 
-    // Ignore the <None> virtual device
+    // Ignore the <Select Port> virtual device
     if (device > 0) {
         // Get 'real' port ID
         int portId = device - 1;
@@ -212,9 +212,11 @@ void SerialManager::onDataReceived() {
                         .arg(time, line);
 
                 // Write received data to log file
-                if (m_file.open(QFile::Append) && fileLoggingEnabled()) {
-                    m_file.write(format.toUtf8());
-                    m_file.close();
+                if (fileLoggingEnabled() && !m_file.fileName().isEmpty()) {
+                    if (m_file.open(QFile::Append)) {
+                        m_file.write(format.toUtf8());
+                        m_file.close();
+                    }
                 }
 
                 // Update UI
@@ -289,10 +291,10 @@ void SerialManager::configureLogFile() {
     // Get file name and path
     QString format = QDateTime::currentDateTime().toString("yyyy/MMM/dd/");
     QString fileName = QDateTime::currentDateTime().toString("HH-mm-ss") + ".html";
-    QString path = QString("%1/.%2/%3/%4").arg(QDir::homePath(),
-                                               qApp->applicationName(),
-                                               m_port->portName(),
-                                               format);
+    QString path = QString("%1/%2/%3/%4").arg(QDir::homePath(),
+                                              qApp->applicationName(),
+                                              m_port->portName(),
+                                              format);
 
     // Generate file path if required
     QDir dir(path);
