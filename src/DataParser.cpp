@@ -359,17 +359,17 @@ void DataParser::parsePacket(const QString& packet) {
         info.insert(kGpsSatelliteCount,
                     QVariant(data.at(kGpsSatelliteCount)));
         info.insert(kAccelerometerX,
-                    QVariant(data.at(kAccelerometerX).toDouble()));
+                    QVariant(data.at(kAccelerometerX).toFloat()));
         info.insert(kAccelerometerY,
-                    QVariant(data.at(kAccelerometerY).toDouble()));
+                    QVariant(data.at(kAccelerometerY).toFloat()));
         info.insert(kAccelerometerZ,
-                    QVariant(data.at(kAccelerometerZ).toDouble()));
+                    QVariant(data.at(kAccelerometerZ).toFloat()));
         info.insert(kGyroscopeX,
-                    QVariant(data.at(kGyroscopeX).toDouble()));
+                    QVariant(data.at(kGyroscopeX).toFloat()));
         info.insert(kGyroscopeY,
-                    QVariant(data.at(kGyroscopeY).toDouble()));
+                    QVariant(data.at(kGyroscopeY).toFloat()));
         info.insert(kGyroscopeZ,
-                    QVariant(data.at(kGyroscopeZ).toDouble()));
+                    QVariant(data.at(kGyroscopeZ).toFloat()));
         info.insert(kChecksumCode,
                     QVariant(data.at(kChecksumCode).toUInt()));
 
