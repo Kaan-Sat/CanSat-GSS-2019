@@ -54,22 +54,40 @@ DataParser::DataParser() :
              this, &DataParser::saveCsvData);
 }
 
+/**
+ * @returns the team ID number (extracted from the last packet received)
+ */
 int DataParser::teamId() const {
     return m_data.at(kTeamID).toInt();
 }
 
+/**
+ * @returns the packet ID (extracted from the last packet received)
+ */
 int DataParser::packetCount() const {
     return m_data.at(kPacketCount).toInt();
 }
 
+/**
+ * @returns the mission time in milliseconds (extracted from the last packet
+ *          received)
+ */
 quint64 DataParser::missionTime() const {
     return m_data.at(kMisionTime).toUInt();
 }
 
+/**
+ * @returns the altitude of the CanSat in meters (extracted from the last
+ *          packet received)
+ */
 double DataParser::altitude() const {
     return m_data.at(kAltitude).toDouble();
 }
 
+/**
+ * @returns the battery voltage of the CanSat (extracted from the last packet
+ *          received)
+ */
 double DataParser::batteryVoltage() const {
     return m_data.at(kBatteryVoltage).toDouble();
 }
@@ -176,7 +194,7 @@ void DataParser::parsePacket(const QByteArray& packet) {
 
         // Split packet data and verify that its length is valid
         data = copy.split(DATA_SEPARATOR);
-        if (data.length() != EmptyDataPacket().length()) {
+        if (data.count() != EmptyDataPacket().count()) {
             emit packetError();
             return;
         }
