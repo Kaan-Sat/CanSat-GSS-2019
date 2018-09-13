@@ -343,7 +343,7 @@ void DataParser::parsePacket(const QByteArray& packet) {
         
         // If received packet ID is smaller than the last packet ID, then a
         // satellite reset has ocurred.
-        else if (packetCount() > info.at(kPacketCount).toUInt())
+        else if (packetCount() > info.at(kPacketCount).toInt())
             emit satelliteReset();
 
         // Update current packet
