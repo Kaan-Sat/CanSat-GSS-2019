@@ -28,9 +28,77 @@
 #include <QObject>
 #include <QVariant>
 #include <QVector3D>
+#include <QDateTime>
 
 class DataParser : public QObject {
     Q_OBJECT
+    Q_PROPERTY(int teamId
+               READ teamId
+               NOTIFY dataParsed)
+    Q_PROPERTY(int packetCount
+               READ packetCount
+               NOTIFY dataParsed)
+    Q_PROPERTY(quint64 missionTime
+               READ missionTime
+               NOTIFY dataParsed)
+    Q_PROPERTY(double altitude
+               READ altitude
+               NOTIFY dataParsed)
+    Q_PROPERTY(double voltage
+               READ batteryVoltage
+               NOTIFY dataParsed)
+    Q_PROPERTY(double relativeHumidity
+               READ relativeHumidity
+               NOTIFY dataParsed)
+    Q_PROPERTY(double uvRadiationIndex
+               READ uvRadiationIndex
+               NOTIFY dataParsed)
+    Q_PROPERTY(double temperature
+               READ temperature
+               NOTIFY dataParsed)
+    Q_PROPERTY(double atmosphericPressure
+               READ atmosphericPressure
+               NOTIFY dataParsed)
+    Q_PROPERTY(QDateTime gpsTime
+               READ gpsTime
+               NOTIFY dataParsed)
+    Q_PROPERTY(double gpsVelocity
+               READ gpsVelocity
+               NOTIFY dataParsed)
+    Q_PROPERTY(double gpsAltitude
+               READ gpsAltitude
+               NOTIFY dataParsed)
+    Q_PROPERTY(double gpsLongitude
+               READ gpsLongitude
+               NOTIFY dataParsed)
+    Q_PROPERTY(double gpsLatitude
+               READ gpsLatitude
+               NOTIFY dataParsed)
+    Q_PROPERTY(int gpsSatelliteCount
+               READ gpsSatelliteCount
+               NOTIFY dataParsed)
+    Q_PROPERTY(QVector3D gyroscope
+               READ gyroscopeData
+               NOTIFY dataParsed)
+    Q_PROPERTY(QVector3D accelerometer
+               READ accelerometerData
+               NOTIFY dataParsed)
+    Q_PROPERTY(quint32 checksum
+               READ checksum
+               NOTIFY dataParsed)
+    Q_PROPERTY(bool csvLoggingEnabled
+               READ csvLoggingEnabled
+               WRITE enableCsvLogging
+               NOTIFY csvLoggingEnabledChanged)
+    Q_PROPERTY(int errorCount
+               READ errorCount
+               NOTIFY packetError)
+    Q_PROPERTY(int resetCount
+               READ resetCount
+               NOTIFY satelliteReset)
+    Q_PROPERTY(int successCount
+               READ successCount
+               NOTIFY dataParsed)
 
 signals:
     void dataParsed();
@@ -41,16 +109,19 @@ signals:
 public:
     DataParser();
 
+    int resetCount() const;
+    int errorCount() const;
+    int successCount() const;
+
     int teamId() const;
     int packetCount() const;
     quint64 missionTime() const;
 
     double altitude() const;
+    double temperature() const;
     double batteryVoltage() const;
     double relativeHumidity() const;
     double uvRadiationIndex() const;
-    double internalTemperature() const;
-    double externalTemperature() const;
     double atmosphericPressure() const;
 
     QDateTime gpsTime() const;
@@ -67,14 +138,21 @@ public:
     bool csvLoggingEnabled() const;
 
 public slots:
+    void resetData();
     void enableCsvLogging(const bool enabled);
 
 private slots:
     void saveCsvData();
+    void onPacketError();
+    void onPacketParsed();
+    void onSatelliteReset();
     void parsePacket(const QByteArray &data);
 
 private:
     quint32 m_crc32;
+    int m_resetCount;
+    int m_errorCount;
+    int m_successCount;
     QVector<QVariant> m_data;
     bool m_csvLoggingEnabled;
 };

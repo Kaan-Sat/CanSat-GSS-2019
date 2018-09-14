@@ -125,8 +125,9 @@ ColumnLayout {
                 }
 
                 CheckBox {
-                    checked: true
+                    checked: CDataParser.csvLoggingEnabled
                     text: qsTr("Save sensor readings to CSV file")
+                    onCheckedChanged: CDataParser.csvLoggingEnabled = checked
                 }
 
                 CheckBox {

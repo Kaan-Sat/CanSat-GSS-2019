@@ -5,11 +5,12 @@
         <file>Components/Terminal.qml</file>
         <file>Components/ComConsole.qml</file>
         <file>Components/DataGrid.qml</file>
-        <file>Components/GPS.qml</file>
         <file>Components/Overview.qml</file>
-        <file>Modules/MisionData.qml</file>
         <file>Modules/Configuration.qml</file>
         <file>Modules/CsvData.qml</file>
         <file>Modules/Logger.qml</file>
+        <file>Modules/Dashboard.qml</file>
+        <file>Modules/GpsMap.qml</file>
+        <file>Components/DataLabel.qml</file>
     </qresource>
 </RCC>

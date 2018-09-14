@@ -23,7 +23,10 @@
 import QtQuick 2.0
 import QtQuick.Window 2.0
 import QtQuick.Controls 2.0
+import QtQuick.Controls.Material 2.0
 import QtQuick.Controls.Universal 2.0
+
+import Qt.labs.settings 1.0
 
 ApplicationWindow {
     id: app
@@ -32,18 +35,34 @@ ApplicationWindow {
     // Application constants
     //
     readonly property int spacing: 8
+    readonly property string monoFont: "Hack"
+    readonly property string invalidData: "--.--"
 
     //
     // Window options
     //
+    x: 100
+    y: 100
     width: 800
     height: 600
     visible: true
     title: AppName
 
     //
+    // Guardar posición y tamaño de la ventana automáticamente
+    //
+    Settings {
+        property alias _x: app.x
+        property alias _y: app.y
+        property alias _w: app.width
+        property alias _h: app.height
+    }
+
+
+    //
     // Theme options
     //
+    Material.theme: Material.Dark
     Universal.theme: Universal.Dark
     Universal.accent: Universal.Steel
 
@@ -55,19 +74,10 @@ ApplicationWindow {
     }
 
     //
-    // UI loader
+    // UI module
     //
-    Loader {
-        opacity: 0
-        asynchronous: true
+    UI {
         anchors.fill: parent
-        onLoaded: opacity = 1
-
-        sourceComponent: UI {
-            anchors.fill: parent
-            anchors.margins: app.spacing
-        }
-
-        Behavior on opacity { NumberAnimation {} }
+        anchors.margins: app.spacing
     }
 }

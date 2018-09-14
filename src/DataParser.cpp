@@ -45,6 +45,9 @@ static QVector<QVariant> EmptyDataPacket() {
  */
 DataParser::DataParser() :
     m_crc32(0),
+    m_resetCount(0),
+    m_errorCount(0),
+    m_successCount(0),
     m_data(EmptyDataPacket()),
     m_csvLoggingEnabled (false)
 {
@@ -52,6 +55,24 @@ DataParser::DataParser() :
              this, &DataParser::parsePacket);
     connect (this, &DataParser::dataParsed,
              this, &DataParser::saveCsvData);
+    connect (this, &DataParser::dataParsed,
+             this, &DataParser::onPacketParsed);
+    connect (this, &DataParser::satelliteReset,
+             this, &DataParser::onSatelliteReset);
+    connect (this, &DataParser::packetError,
+             this, &DataParser::onPacketError);
+}
+
+int DataParser::resetCount() const {
+    return m_resetCount;
+}
+
+int DataParser::errorCount() const {
+    return m_errorCount;
+}
+
+int DataParser::successCount() const {
+    return m_successCount;
 }
 
 /**
@@ -91,17 +112,24 @@ double DataParser::batteryVoltage() const {
 }
 
 /**
- * @returns the internal temperature of the CanSat in Kelvins
- */          
-double DataParser::internalTemperature() const {
-    return m_data.at(kInternalTemp).toDouble();
+ * @returns the relative humidity detected by the CanSat
+ */
+double DataParser::relativeHumidity() const {
+    return m_data.at(kRelativeHumidity).toDouble();
 }
 
 /**
- * @returns the external (atmospheric) temperature in Kelvins
- */ 
-double DataParser::externalTemperature() const {
-    return m_data.at(kExternalTemp).toDouble();
+ * @returns the UV radiation index detected by the CanSat
+ */
+double DataParser::uvRadiationIndex() const {
+    return m_data.at(kUvRadiationIndex).toDouble();
+}
+
+/**
+ * @returns the internal temperature of the CanSat in Kelvins
+ */
+double DataParser::temperature() const {
+    return m_data.at(kTemperature).toDouble();
 }
 
 /**
@@ -113,42 +141,42 @@ double DataParser::atmosphericPressure() const {
 
 /**
  * @returns the date/time received by the GPS module of the CanSat
- */ 
+ */
 QDateTime DataParser::gpsTime() const {
     return m_data.at(kGpsTime).toDateTime();
 }
 
 /**
  * @returns the calculated velocity based on GPS readings
- */ 
+ */
 double DataParser::gpsVelocity() const {
     return m_data.at(kGpsVelocity).toDouble();
 }
 
 /**
  * @returns the calculated altitude based on GPS readings
- */ 
+ */
 double DataParser::gpsAltitude() const {
     return m_data.at(kGpsAltitude).toDouble();
 }
 
 /**
  * @returns the calculated latitude based on GPS readings
- */ 
+ */
 double DataParser::gpsLatitude() const {
     return m_data.at(kGpsLatitude).toDouble();
 }
 
 /**
  * @returns the calculated longitude based on GPS readings
- */ 
+ */
 double DataParser::gpsLongitude() const {
     return m_data.at(kGpsLongitude).toDouble();
 }
 
 /**
  * @returns the number of satellites detected by the GPS receiver
- */ 
+ */
 int DataParser::gpsSatelliteCount() const {
     return m_data.at(kGpsSatelliteCount).toInt();
 }
@@ -156,7 +184,7 @@ int DataParser::gpsSatelliteCount() const {
 /**
  * @returns a vector with the (x,y,z) readings of the gyroscope
  *          sensor
- */          
+ */
 QVector3D DataParser::gyroscopeData() const {
     QVector3D vector;
     vector.setX(m_data.at(kGyroscopeX).toFloat());
@@ -167,7 +195,7 @@ QVector3D DataParser::gyroscopeData() const {
 
 /**
  * @returns a vector with the (x,y,z) accelerometer readings
- */ 
+ */
 QVector3D DataParser::accelerometerData() const {
     QVector3D vector;
     vector.setX(m_data.at(kAccelerometerX).toFloat());
@@ -178,7 +206,7 @@ QVector3D DataParser::accelerometerData() const {
 
 /**
  * @returns the CRC32 checksum code of the last packet
- */ 
+ */
 quint32 DataParser::checksum() const {
     return m_data.at(kChecksumCode).toUInt();
 }
@@ -186,9 +214,24 @@ quint32 DataParser::checksum() const {
 /**
  * @returns @c true if the class shall save all received data
  *          in a simple CSV table
- */          
+ */
 bool DataParser::csvLoggingEnabled() const {
     return m_csvLoggingEnabled;
+}
+
+/**
+ * Resets all the internal variables to their initial state
+ */
+void DataParser::resetData() {
+    m_crc32 = 0;
+    m_errorCount = 0;
+    m_resetCount = 0;
+    m_successCount = 0;
+    m_data = EmptyDataPacket();
+
+    emit dataParsed();
+    emit packetError();
+    emit satelliteReset();
 }
 
 /**
@@ -198,7 +241,7 @@ bool DataParser::csvLoggingEnabled() const {
  * and interpreted (successfully) will be written in a simple CSV table
  * on the home directory of the user. This is useful for later analysis
  * of the mission data.
- */ 
+ */
 void DataParser::enableCsvLogging(const bool enabled) {
     m_csvLoggingEnabled = enabled;
     emit csvLoggingEnabledChanged();
@@ -301,10 +344,8 @@ void DataParser::parsePacket(const QByteArray& packet) {
                     QVariant(data.at(kRelativeHumidity).toDouble()));
         info.insert(kUvRadiationIndex,
                     QVariant(data.at(kUvRadiationIndex).toDouble()));
-        info.insert(kInternalTemp,
-                    QVariant(data.at(kInternalTemp).toDouble()));
-        info.insert(kExternalTemp,
-                    QVariant(data.at(kExternalTemp).toDouble()));
+        info.insert(kTemperature,
+                    QVariant(data.at(kTemperature).toDouble()));
         info.insert(kAtmPressure,
                     QVariant(data.at(kAtmPressure).toDouble()));
         info.insert(kGpsTime,
@@ -353,12 +394,33 @@ void DataParser::parsePacket(const QByteArray& packet) {
 }
 
 /**
+ * Increments the number of packet reading errors
+ */
+void DataParser::onPacketError() {
+    ++m_errorCount;
+}
+
+/**
+ * Increments the number of packet reading successes
+ */
+void DataParser::onPacketParsed() {
+    ++m_successCount;
+}
+
+/**
+ * Increments the number of resets
+ */
+void DataParser::onSatelliteReset() {
+    ++m_resetCount;
+}
+
+/**
  * @brief If the CSV logging feature is enabled, then this function
  *        shall save all the data extracted from the current packet
  *        to the CSV table.
  * @note If the CSV table file does not exist or is empty, then this
  *       function shall also write the header titles to the CSV file
- */       
+ */
 void DataParser::saveCsvData() {
     if (csvLoggingEnabled()) {
 

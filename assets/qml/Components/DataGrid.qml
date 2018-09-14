@@ -21,8 +21,250 @@
  */
 
 import QtQuick 2.0
+import QtQuick.Layouts 1.0
+import QtQuick.Controls 2.0
 
-Item {
+GridLayout {
+    id: dataGrid
 
+    columns: 2
+    rowSpacing: app.spacing
+    columnSpacing: app.spacing
+
+    //
+    // Mission status
+    //
+    GroupBox {
+        font.family: app.monoFont
+        title: qsTr("Mission Status")
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+
+        ColumnLayout {
+            spacing: app.spacing
+            anchors.centerIn: parent
+
+            DataLabel {
+                title: qsTr("Mission Time")
+                dataset: {
+                    function pad(n) {
+                        return (n < 10) ? ("0" + n) : n;
+                    }
+
+                    var milliseconds = CDataParser.missionTime
+                    var seconds = (milliseconds / 1000)
+                    var minutes = (seconds / 60) % 60
+
+                    seconds = seconds % 60
+                    milliseconds = milliseconds % 1000
+
+                    return pad(minutes) + ":"
+                            + pad(seconds) + "."
+                            + milliseconds.toString()[0]
+                }
+            }
+
+            DataLabel {
+                title: qsTr("Packet Count")
+                dataset: CDataParser.packetCount
+            }
+
+            DataLabel {
+                title: qsTr("Checksum")
+                dataset: CDataParser.checksum
+            }
+        }
+    }
+
+    //
+    // Misc. sensors
+    //
+    GroupBox {
+        font.family: app.monoFont
+        title: qsTr("Sensor Readings")
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+
+        ColumnLayout {
+            anchors.centerIn: parent
+
+            DataLabel {
+                units: "m"
+                title: qsTr("Altitude")
+                dataset: CDataParser.altitude
+            }
+
+            DataLabel {
+                units: "ATM"
+                title: qsTr("Pressure")
+                dataset: CDataParser.atmosphericPressure
+            }
+
+            DataLabel {
+                units: "°C"
+                title: qsTr("Temperature")
+                dataset: CDataParser.temperature
+            }
+
+            DataLabel {
+                title: qsTr("Relative Humidity")
+                dataset: CDataParser.relativeHumidity + "%"
+            }
+
+            DataLabel {
+                title: qsTr("UV Index")
+                dataset: CDataParser.uvRadiationIndex
+            }
+        }
+    }
+
+    //
+    // Accelerometer
+    //
+    GroupBox {
+        font.family: app.monoFont
+        title: qsTr("Accelerometer")
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+
+        ColumnLayout {
+            spacing: app.spacing
+            anchors.centerIn: parent
+
+            DataLabel {
+                title: "X"
+                units: "m/s^2"
+                dataset: CDataParser.accelerometer.x
+            }
+
+            DataLabel {
+                title: "Y"
+                units: "m/s^2"
+                dataset: CDataParser.accelerometer.y
+            }
+
+            DataLabel {
+                title: "Z"
+                units: "m/s^2"
+                dataset: CDataParser.accelerometer.z
+            }
+        }
+    }
+
+    //
+    // Gyroscope
+    //
+    GroupBox {
+        font.family: app.monoFont
+        title: qsTr("Gyroscope")
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+
+        ColumnLayout {
+            spacing: app.spacing
+            anchors.centerIn: parent
+
+            DataLabel {
+                title: "X"
+                units: "m/s^2"
+                dataset: CDataParser.gyroscope.x
+            }
+
+            DataLabel {
+                title: "Y"
+                units: "m/s^2"
+                dataset: CDataParser.gyroscope.y
+            }
+
+            DataLabel {
+                title: "Z"
+                units: "m/s^2"
+                dataset: CDataParser.gyroscope.z
+            }
+        }
+    }
+
+    //
+    // GPS
+    //
+    GroupBox {
+        font.family: app.monoFont
+        title: qsTr("GPS")
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+
+        ColumnLayout {
+            spacing: app.spacing
+            anchors.centerIn: parent
+
+            DataLabel {
+                units: "m"
+                title: qsTr("Altitude")
+                dataset: CDataParser.gpsAltitude
+            }
+
+            DataLabel {
+                units: "m/s"
+                title: qsTr("Velocity")
+                dataset: CDataParser.gpsVelocity
+            }
+
+            DataLabel {
+                title: qsTr("Latitude")
+                dataset: CDataParser.gpsLatitude
+            }
+
+            DataLabel {
+                title: qsTr("Longitude")
+                dataset: CDataParser.gpsLongitude
+            }
+
+            DataLabel {
+                title: qsTr("Satellites")
+                dataset: CDataParser.gpsSatelliteCount
+            }
+
+            DataLabel {
+                title: qsTr("GPS Time")
+                dataset: CDataParser.gpsTime
+            }
+        }
+    }
+
+    //
+    // Satellite health & comm. status
+    //
+    GroupBox {
+        font.family: app.monoFont
+        title: qsTr("Satellite Health")
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+
+        ColumnLayout {
+            spacing: app.spacing
+            anchors.centerIn: parent
+
+            DataLabel {
+                units: "V"
+                title: qsTr("Voltage")
+                dataset: CDataParser.voltage
+            }
+
+            DataLabel {
+                title: qsTr("Resets")
+                dataset: CDataParser.resetCount
+            }
+
+            DataLabel {
+                title: qsTr("Packet Errors")
+                dataset: CDataParser.errorCount
+            }
+
+            DataLabel {
+                title: qsTr("Packets Parsed")
+                dataset: CDataParser.successCount
+            }
+        }
+    }
 }
 

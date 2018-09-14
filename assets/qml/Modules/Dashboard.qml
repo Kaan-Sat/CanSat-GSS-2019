@@ -25,50 +25,65 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls 2.4
 import QtQuick.Controls.Universal 2.0
 
-Item {
-    //
-    // Custom properties
-    //
-    property int scrollback: 100
-    property bool autoScroll: true
-    property alias text: _textDisplay.text
-    property alias textContainer: _textDisplay
+import "../Components"
 
-    //
-    // Appends the given string to the text and scrolls
-    // the view to the bottom
-    //
-    function append(str) {
-        text += str
-        if (autoScroll)
-            textContainer.cursorPosition = textContainer.length
+ColumnLayout {
+    spacing: app.spacing
+
+    RowLayout {
+        spacing: app.spacing
+        Layout.fillWidth: true
+
+        Label {
+            font.pixelSize: 24
+            text: qsTr("Dashboard")
+        }
+
+        Item {
+            Layout.fillWidth: true
+        }
+
+        Button {
+            text: qsTr("Reset Data")
+            onClicked: CDataParser.resetData()
+            icon.source: "qrc:/icons/reset.svg"
+        }
     }
 
-    //
-    // Clears the current buffer
-    //
-    function clear() {
-        text = ""
-    }
+    Rectangle {
+        id: rect
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        color: Universal.background
 
-    //
-    // Text display
-    //
-    ScrollView {
-        anchors.fill: parent
+        border {
+            width: 2
+            color: "#858585"
+        }
 
-        TextArea {
-            id: _textDisplay
-            readOnly: true
-            color: "#72d5a3"
-            anchors.fill: parent
-            textFormat: TextArea.RichText
-            placeholderText: qsTr("No data received so far") + "..."
+        RowLayout {
+            spacing: app.spacing
 
-            onLineCountChanged: {
-                if (lineCount > scrollback)
-                    remove(0, length / 2)
+            anchors {
+                fill: parent
+                margins: app.spacing
+            }
+
+            Image {
+                Layout.alignment: Qt.AlignVCenter
+                source: "qrc:/images/satellite.svg"
+                sourceSize: {
+                    var length = Math.min(rect.height, rect.width) * 0.8
+                    return Qt.size(length, length)
+                }
+            }
+
+            DataGrid {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.margins: app.spacing
             }
         }
     }
 }
+

@@ -21,8 +21,36 @@
  */
 
 import QtQuick 2.0
+import QtQuick.Layouts 1.0
+import QtQuick.Controls 2.0
 
-Item {
+RowLayout {
+    property string title: ""
+    property string units: ""
+    property string dataset: ""
 
+    spacing: app.spacing
+    Layout.fillWidth: true
+    Layout.fillHeight: true
+
+    Item {
+        Layout.fillWidth: true
+    }
+
+    Label {
+        text: title + ":"
+        Layout.fillWidth: false
+        Layout.fillHeight: true
+        font.family: app.monoFont
+        horizontalAlignment: Label.AlignRight
+    }
+
+    Label {
+        Layout.fillWidth: false
+        Layout.fillHeight: true
+        font.family: app.monoFont
+        horizontalAlignment: Label.AlignHCenter
+        Layout.minimumWidth: font.pixelSize * 5
+        text: CSerialManager.connected ? dataset + " " + units : "--.--"
+    }
 }
-

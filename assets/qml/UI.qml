@@ -90,12 +90,20 @@ ColumnLayout {
                 Layout.fillWidth: true
                 checked: swipeView.currentIndex === 2
                 onClicked: swipeView.currentIndex = 2
+                icon.source: "qrc:/icons/map.svg"
+            }
+
+            Button {
+                Layout.fillWidth: true
+                checked: swipeView.currentIndex === 3
+                onClicked: swipeView.currentIndex = 3
                 icon.source: "qrc:/icons/settings.svg"
             }
 
             Button {
                 Layout.fillWidth: true
                 icon.source: "qrc:/icons/csv.svg"
+                enabled: CDataParser.csvLoggingEnabled
             }
         }
 
@@ -111,6 +119,7 @@ ColumnLayout {
         //
         ComboBox {
             id: devices
+            Layout.preferredWidth: 156
             model: CSerialManager.serialDevices
             enabled: CSerialManager.serialDevices.length > 1
             onCurrentIndexChanged: CSerialManager.startComm(currentIndex)
@@ -126,12 +135,16 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.fillHeight: true
 
-        MisionData {
-            id: misionData
+        Dashboard {
+            id: dashboard
         }
 
         Logger {
             id: logger
+        }
+
+        GpsMap {
+            id: gpsMap
         }
 
         Configuration {

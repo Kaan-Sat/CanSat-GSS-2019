@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/images">
         <file>kaansat.svg</file>
+        <file>satellite.svg</file>
     </qresource>
 </RCC>

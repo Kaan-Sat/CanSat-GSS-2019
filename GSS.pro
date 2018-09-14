@@ -70,15 +70,16 @@ SOURCES += \
 DISTFILES += \
     assets/qml/Components/ComConsole.qml \
     assets/qml/Components/DataGrid.qml \
-    assets/qml/Components/GPS.qml \
     assets/qml/Components/Overview.qml \
     assets/qml/Components/Terminal.qml \
     assets/qml/Modules/Configuration.qml \
     assets/qml/Modules/CsvData.qml \
     assets/qml/Modules/Logger.qml \
-    assets/qml/Modules/MisionData.qml \
     assets/qml/main.qml \
-    assets/qml/UI.qml
+    assets/qml/UI.qml \
+    assets/qml/Modules/Dashboard.qml \
+    assets/qml/Modules/GpsMap.qml \
+    assets/qml/Components/DataLabel.qml
 
 RESOURCES += \
     assets/qml/qml.qrc \
