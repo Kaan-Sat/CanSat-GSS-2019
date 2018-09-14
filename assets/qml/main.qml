@@ -72,14 +72,7 @@ ApplicationWindow {
     //
     Material.theme: Material.Dark
     Universal.theme: Universal.Dark
-    Universal.accent: Universal.Steel
-
-    //
-    // Set background color
-    //
-    background: Rectangle {
-        color: "#212121"
-    }
+    Universal.accent: Universal.Amber
 
     //
     // UI module

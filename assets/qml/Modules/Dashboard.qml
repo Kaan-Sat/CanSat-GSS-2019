@@ -101,7 +101,11 @@ ColumnLayout {
                     opacity: CSerialManager.connected ? 0.25 : 0.1
 
                     sourceSize: {
-                        var length = Math.min(rect.height, rect.width) * 0.8
+                        var length = app.height * 0.6
+
+                        if (app.height > app.width)
+                            length = app.width * 0.4
+
                         return Qt.size(length, length)
                     }
 

@@ -74,28 +74,28 @@ ColumnLayout {
 
             Button {
                 Layout.fillWidth: true
-                checked: swipeView.currentIndex === 0
+                highlighted: swipeView.currentIndex === 0
                 onClicked: swipeView.currentIndex = 0
                 icon.source: "qrc:/icons/dashboard.svg"
             }
 
             Button {
                 Layout.fillWidth: true
-                checked: swipeView.currentIndex === 1
+                highlighted: swipeView.currentIndex === 1
                 onClicked: swipeView.currentIndex = 1
                 icon.source: "qrc:/icons/terminal.svg"
             }
 
             Button {
                 Layout.fillWidth: true
-                checked: swipeView.currentIndex === 2
+                highlighted: swipeView.currentIndex === 2
                 onClicked: swipeView.currentIndex = 2
                 icon.source: "qrc:/icons/map.svg"
             }
 
             Button {
                 Layout.fillWidth: true
-                checked: swipeView.currentIndex === 3
+                highlighted: swipeView.currentIndex === 3
                 onClicked: swipeView.currentIndex = 3
                 icon.source: "qrc:/icons/settings.svg"
             }
