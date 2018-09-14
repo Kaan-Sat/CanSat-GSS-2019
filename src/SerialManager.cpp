@@ -390,6 +390,6 @@ QString SerialManager::sizeStr(const qint64 bytes) const {
         units = " " + tr("MB");
     }
 
-    double rounded = static_cast<double>(floorl(static_cast<long double>(size) * 100)) / 100;
+    double rounded = RoundDbl(size);
     return QString::number(rounded) + units;
 }

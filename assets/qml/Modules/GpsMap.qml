@@ -44,6 +44,11 @@ ColumnLayout {
                                               20.5846129, -100.385372)
 
     //
+    // Used to know if we need to center the map
+    //
+    property var oldCoordinates: QtPositioning.coordinate(0,0)
+
+    //
     // Real-time position
     //
     readonly property var gpsCoordinates: QtPositioning.coordinate(
@@ -54,8 +59,16 @@ ColumnLayout {
     // Center map when connecting with CanSat
     //
     Connections {
+        target: CDataParser
+        onDataParsed: {
+            if (oldCoordinates === QtPositioning.coordinate(0,0)) {
+                map.center = gpsCoordinates
+                oldCoordinates = gpsCoordinates
+            }
+        }
+    } Connections {
         target: CSerialManager
-        onConnectionSuccess: centerMap()
+        onConnectionSuccess: oldCoordinates = QtPositioning.coordinate(0,0)
     }
 
     //
@@ -64,16 +77,12 @@ ColumnLayout {
     //
     function centerMap() {
         // GPS not responding, go to QRO
-        if (!gpsWorking) {
+        if (!gpsWorking)
             map.center = qroCoordinates
-            map.zoomLevel = (map.minimumZoomLevel + map.maximumZoomLevel) / 2
-        }
 
         // Show GPS position
-        else {
+        else
             map.center = gpsCoordinates
-            map.zoomLevel = map.maximumZoomLevel - 2
-        }
     }
 
     //
@@ -127,6 +136,7 @@ ColumnLayout {
             copyrightsVisible: false
             color: Universal.background
             anchors.margins: parent.border.width
+            zoomLevel: (map.minimumZoomLevel + map.maximumZoomLevel) / 2
 
             MapQuickItem {
                 sourceItem: Rectangle {

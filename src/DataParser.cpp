@@ -110,49 +110,51 @@ quint64 DataParser::missionTime() const {
  * @returns the altitude of the CanSat in meters
  */
 double DataParser::altitude() const {
-    return m_data.at(kAltitude).toDouble();
+    return RoundDbl(m_data.at(kAltitude).toDouble());
 }
 
 /**
  * @returns the battery voltage of the CanSat
  */
 double DataParser::batteryVoltage() const {
-    return m_data.at(kBatteryVoltage).toDouble();
+    return RoundDbl(m_data.at(kBatteryVoltage).toDouble());
 }
 
 /**
  * @returns the relative humidity detected by the CanSat
  */
 double DataParser::relativeHumidity() const {
-    return m_data.at(kRelativeHumidity).toDouble();
+    return RoundDbl(m_data.at(kRelativeHumidity).toDouble());
 }
 
 /**
  * @returns the UV radiation index detected by the CanSat
  */
 double DataParser::uvRadiationIndex() const {
-    return m_data.at(kUvRadiationIndex).toDouble();
+    return RoundDbl(m_data.at(kUvRadiationIndex).toDouble());
 }
 
 /**
  * @returns the internal temperature of the CanSat in Kelvins
  */
 double DataParser::temperature() const {
-    return m_data.at(kTemperature).toDouble();
+    return RoundDbl(m_data.at(kTemperature).toDouble());
 }
 
 /**
  * @returns the atmospheric pressure in millibars
  */
 double DataParser::atmosphericPressure() const {
-    return m_data.at(kAtmPressure).toDouble();
+    return RoundDbl(m_data.at(kAtmPressure).toDouble());
 }
 
 /**
  * @returns the date/time received by the GPS module of the CanSat
  */
-QDateTime DataParser::gpsTime() const {
-    return m_data.at(kGpsTime).toDateTime();
+QString DataParser::gpsTime() const {
+    QDateTime time;
+    time.setTime_t (m_data.at(kGpsTime).toUInt());
+    return time.toString("yyyy/MM/dd hh:mm:ss");
 }
 
 /**
@@ -268,7 +270,7 @@ void DataParser::parsePacket(const QByteArray& packet) {
     //--------------------------------------------------------------------------
     // Raw packet validation (so that we don't crash while reading data)
     //--------------------------------------------------------------------------
-    {
+    if (ENABLE_PACKET_CHECK) {
         // Packet is empty, abort
         if (packet.isEmpty()) {
             emit packetError();
@@ -296,7 +298,7 @@ void DataParser::parsePacket(const QByteArray& packet) {
         copy.chop(1);
 
         // Split packet data and verify that its length is valid
-        data = copy.split(DATA_SEPARATOR);
+        data = copy.split(",");
         if (data.count() != EmptyDataPacket().count()) {
             emit packetError();
             return;
@@ -306,7 +308,7 @@ void DataParser::parsePacket(const QByteArray& packet) {
     //--------------------------------------------------------------------------
     // CRC-32 validation
     //--------------------------------------------------------------------------
-    {
+    if (ENABLE_CRC32) {
         // Re-construct packet without CRC32 code
         QString rp;
         for (int i = 0; i < EmptyDataPacket().size(); ++i) {
@@ -336,6 +338,10 @@ void DataParser::parsePacket(const QByteArray& packet) {
         // Init. packet information vector
         QVector<QVariant> info = EmptyDataPacket();
 
+        // Add UNIX/GPS offset in seconds, ignore leap seconds for now,
+        // We do not depend on that...
+        quint64 unixTime = data.at(kGpsTime).toULongLong() + 315964800;
+
         // Extract information to packet vector
         info.insert(kHeader,
                     QVariant(data.at(kHeader)));
@@ -357,8 +363,7 @@ void DataParser::parsePacket(const QByteArray& packet) {
                     QVariant(data.at(kTemperature).toDouble()));
         info.insert(kAtmPressure,
                     QVariant(data.at(kAtmPressure).toDouble()));
-        info.insert(kGpsTime,
-                    QVariant(data.at(kGpsTime).toUInt()));
+        info.insert(kGpsTime, QVariant(unixTime));
         info.insert(kGpsAltitude,
                     QVariant(data.at(kGpsAltitude).toDouble()));
         info.insert(kGpsVelocity,
@@ -372,17 +377,17 @@ void DataParser::parsePacket(const QByteArray& packet) {
         info.insert(kGpsSatelliteCount,
                     QVariant(data.at(kGpsSatelliteCount)));
         info.insert(kAccelerometerX,
-                    QVariant(data.at(kAccelerometerX).toFloat()));
+                    QVariant(data.at(kAccelerometerX).toDouble()));
         info.insert(kAccelerometerY,
-                    QVariant(data.at(kAccelerometerY).toFloat()));
+                    QVariant(data.at(kAccelerometerY).toDouble()));
         info.insert(kAccelerometerZ,
-                    QVariant(data.at(kAccelerometerZ).toFloat()));
+                    QVariant(data.at(kAccelerometerZ).toDouble()));
         info.insert(kGyroscopeX,
-                    QVariant(data.at(kGyroscopeX).toFloat()));
+                    QVariant(data.at(kGyroscopeX).toDouble()));
         info.insert(kGyroscopeY,
-                    QVariant(data.at(kGyroscopeY).toFloat()));
+                    QVariant(data.at(kGyroscopeY).toDouble()));
         info.insert(kGyroscopeZ,
-                    QVariant(data.at(kGyroscopeZ).toFloat()));
+                    QVariant(data.at(kGyroscopeZ).toDouble()));
         info.insert(kChecksumCode,
                     QVariant(data.at(kChecksumCode).toUInt()));
 

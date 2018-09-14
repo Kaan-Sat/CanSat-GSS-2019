@@ -59,7 +59,7 @@ class DataParser : public QObject {
     Q_PROPERTY(double atmosphericPressure
                READ atmosphericPressure
                NOTIFY dataParsed)
-    Q_PROPERTY(QDateTime gpsTime
+    Q_PROPERTY(QString gpsTime
                READ gpsTime
                NOTIFY dataParsed)
     Q_PROPERTY(double gpsVelocity
@@ -124,7 +124,7 @@ public:
     double uvRadiationIndex() const;
     double atmosphericPressure() const;
 
-    QDateTime gpsTime() const;
+    QString gpsTime() const;
     double gpsVelocity() const;
     double gpsAltitude() const;
     double gpsLatitude() const;

@@ -62,6 +62,7 @@ Item {
             readOnly: true
             color: "#72d5a3"
             anchors.fill: parent
+            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             textFormat: TextArea.RichText
             placeholderText: qsTr("No data received so far") + "..."
 

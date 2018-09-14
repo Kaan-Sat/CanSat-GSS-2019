@@ -58,6 +58,10 @@ GridLayout {
                     seconds = seconds % 60
                     milliseconds = milliseconds % 1000
 
+                    seconds = Math.round(seconds)
+                    minutes = Math.round(minutes)
+                    milliseconds = Math.round(milliseconds)
+
                     return pad(minutes) + ":"
                             + pad(seconds) + "."
                             + milliseconds.toString()[0]
@@ -65,13 +69,13 @@ GridLayout {
             }
 
             DataLabel {
-                title: qsTr("Packet Count")
-                dataset: CDataParser.packetCount
+                title: qsTr("Team ID")
+                dataset: CDataParser.teamId
             }
 
             DataLabel {
                 title: qsTr("Checksum")
-                dataset: CDataParser.checksum
+                dataset: (CDataParser.checksum).toString(16)
             }
         }
     }
