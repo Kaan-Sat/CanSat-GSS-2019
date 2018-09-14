@@ -35,8 +35,8 @@ CONFIG += c++11
 # Qt configuration
 #-------------------------------------------------------------------------------
 
-TARGET = GSS
 TEMPLATE = app
+TARGET = cansat-gss
 
 CONFIG += qtc_runnable
 CONFIG += resources_big
@@ -49,6 +49,25 @@ QT += serialport
 QT += quickcontrols2
 
 QTPLUGIN += qsvg
+
+#-------------------------------------------------------------------------------
+# Deploy options
+#-------------------------------------------------------------------------------
+
+win32* {
+    RC_FILE = deploy/windows/resources/info.rc
+}
+
+linux:!android {
+    target.path = /usr/bin
+    icon.path = /usr/share/pixmaps
+    desktop.path = /usr/share/applications
+    icon.files += deploy/linux/cansat-gss.png
+    desktop.files += deploy/linux/cansat-gss.desktop
+
+    INSTALLS += target desktop icon
+}
+
 
 #-------------------------------------------------------------------------------
 # Import source code

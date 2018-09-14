@@ -23,8 +23,8 @@
 #ifndef APP_INFO_H
 #define APP_INFO_H
 
-#define APP_NAME            "Ground Station"
-#define APP_VERSION         "0.1 Alpha"
+#define APP_NAME            "CanSat Ground Station"
+#define APP_VERSION         "1.0"
 #define ORGANIZATION_NAME   "Ka'an Sat"
 
 #endif

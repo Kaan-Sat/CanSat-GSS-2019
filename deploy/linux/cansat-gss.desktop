@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Ka'an Sat Ground Station Software
+Comment=Software for receiving and managing CanSat packets
+Exec=cansat-gss
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Electronics;Engineering;Science;
+Icon=cansat-gss
