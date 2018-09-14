@@ -59,7 +59,8 @@ HEADERS += \
     src/DataParser.h \
     src/SerialManager.h \
     src/crc32.h \
-    src/Constants.h
+    src/Constants.h \
+    src/AppQuiter.h
 
 SOURCES += \
     src/DataParser.cpp \

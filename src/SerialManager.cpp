@@ -46,8 +46,9 @@ static SerialManager* instance = Q_NULLPTR;
  * @brief Constructor for the @a SerialManager class
  */
 SerialManager::SerialManager() :
-    m_dataLen (-1),
-    m_port (Q_NULLPTR),
+    m_baudRate(9600),
+    m_dataLen(-1),
+    m_port(Q_NULLPTR),
     m_enableFileLogging(false)
 {
     connect(this, &SerialManager::packetReceived,
@@ -81,6 +82,13 @@ SerialManager* SerialManager::getInstance() {
         instance = new SerialManager();
 
     return instance;
+}
+
+/**
+ * @returns the baud rate used to communicate with the serial device
+ */
+int SerialManager::baudRate() const {
+    return m_baudRate;
 }
 
 /**
@@ -126,6 +134,20 @@ void SerialManager::openLogFile() {
         QDesktopServices::openUrl(QUrl::fromLocalFile(m_packetLog.fileName()));
 }
 
+/**
+ * Changes the baud @a rate used to communicate with the serial device
+ */
+void SerialManager::setBaudRate(const int rate) {
+    if (rate > 0) {
+        m_baudRate = rate;
+
+        if (m_port)
+            m_port->setBaudRate(baudRate());
+
+        emit baudRateChanged();
+    }
+}
+
 void SerialManager::startComm(const int device) {
     // Disconnect current serial port device
     disconnectDevice();
@@ -140,7 +162,7 @@ void SerialManager::startComm(const int device) {
         if (portId < ports.count()) {
             // Configure new serial port device
             m_port = new QSerialPort(ports.at(portId));
-            m_port->setBaudRate(9600);
+            m_port->setBaudRate(baudRate());
 
             // Connect signals/slots
             connect(m_port, SIGNAL(readyRead()),

@@ -124,6 +124,23 @@ ColumnLayout {
             enabled: CSerialManager.serialDevices.length > 1
             onCurrentIndexChanged: CSerialManager.startComm(currentIndex)
         }
+
+        //
+        // Spacer
+        //
+        Item {
+            width: app.spacing
+        }
+
+        //
+        // Close button
+        //
+        Button {
+            highlighted: true
+            onClicked: app.close()
+            Universal.accent: Universal.Red
+            icon.source: "qrc:/icons/exit.svg"
+        }
     }
 
     //
@@ -131,6 +148,7 @@ ColumnLayout {
     //
     SwipeView {
         id: swipeView
+        interactive: false
         spacing: app.spacing
         Layout.fillWidth: true
         Layout.fillHeight: true
@@ -203,13 +221,6 @@ ColumnLayout {
         //
         Connections {
             target: CSerialManager
-
-            onConnectionSuccess: {
-                dialog.error = false
-                dialog.title = qsTr("Information")
-                description.text = qsTr("Connected to \"%1\"").arg(deviceName)
-                dialog.open()
-            }
 
             onConnectionError: {
                 dialog.error = true

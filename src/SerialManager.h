@@ -42,8 +42,13 @@ class SerialManager : public QObject {
     Q_PROPERTY(QStringList serialDevices
                READ serialDevices
                NOTIFY serialDevicesChanged)
+    Q_PROPERTY(int baudRate
+               READ baudRate
+               WRITE setBaudRate
+               NOTIFY baudRateChanged)
 
 signals:
+    void baudRateChanged();
     void connectionChanged();
     void serialDevicesChanged();
     void fileLoggingEnabledChanged();
@@ -59,6 +64,7 @@ private:
 public:
     static SerialManager* getInstance();
 
+    int baudRate() const;
     bool connected() const;
     bool fileLoggingEnabled() const;
 
@@ -67,6 +73,7 @@ public:
 
 public slots:
     void openLogFile();
+    void setBaudRate(const int rate);
     void startComm(const int device);
     void enableFileLogging(const bool enabled);
 
@@ -82,6 +89,7 @@ private:
     QString sizeStr(const qint64 bytes) const;
 
 private:
+    int m_baudRate;
     QFile m_packetLog;
     qint64 m_dataLen;
     QByteArray m_buffer;

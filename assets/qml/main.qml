@@ -22,7 +22,7 @@
 
 import QtQuick 2.0
 import QtQuick.Window 2.0
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.3
 import QtQuick.Controls.Material 2.0
 import QtQuick.Controls.Universal 2.0
 
@@ -43,10 +43,11 @@ ApplicationWindow {
     //
     x: 100
     y: 100
-    width: 800
-    height: 600
-    visible: true
     title: AppName
+    minimumWidth: 1120
+    minimumHeight: 720
+    width: minimumWidth
+    height: minimumHeight
 
     //
     // Guardar posición y tamaño de la ventana automáticamente
@@ -58,6 +59,13 @@ ApplicationWindow {
         property alias _h: app.height
     }
 
+    //
+    // Ask user if he/she wants to exit app
+    //
+    onClosing: {
+        close.accepted = false
+        dialog.open()
+    }
 
     //
     // Theme options
@@ -79,5 +87,48 @@ ApplicationWindow {
     UI {
         anchors.fill: parent
         anchors.margins: app.spacing
+    }
+
+
+    //
+    // Connection status dialog
+    //
+    Dialog {
+        id: dialog
+
+        //
+        // Only close the dialog when the user
+        // presses on the 'OK' button
+        //
+        modal: true
+        closePolicy: Dialog.NoAutoClose
+        standardButtons: Dialog.Yes | Dialog.No
+
+        //
+        // Close the application when user clicks on 'yes' button
+        //
+        onAccepted: CAppQuiter.closeApplication()
+
+        //
+        // Center dialog on app window
+        //
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+
+        //
+        // Set min. width to 320 pixels
+        //
+        width: Math.max(implicitWidth, 320)
+
+        //
+        // Message description
+        //
+        title: qsTr("Exit confirmation")
+        Label {
+            anchors.fill: parent
+            verticalAlignment: Qt.AlignTop
+            horizontalAlignment: Qt.AlignLeft
+            text: qsTr("Are you sure you want to exit %1?").arg(AppName)
+        }
     }
 }

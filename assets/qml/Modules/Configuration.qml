@@ -25,9 +25,14 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls 2.4
 import QtQuick.Controls.Universal 2.0
 
+import Qt.labs.settings 1.0
+
 ColumnLayout {
     spacing: app.spacing
 
+    //
+    // Title
+    //
     RowLayout {
         spacing: app.spacing
         Layout.fillWidth: true
@@ -47,6 +52,30 @@ ColumnLayout {
         }
     }
 
+    //
+    // Save settings between runs
+    //
+    Settings {
+        property alias _fullscreen: fullscreen.checked
+        property alias _baudRate: baudRate.currentIndex
+        property alias _enableLogging: enableLogging.checked
+        property alias _enableCsvLogging: enableCsvLogging.checked
+    }
+
+    //
+    // Show application window on start
+    //
+    Component.onCompleted: {
+        app.visible = true
+        if (fullscreen.checked)
+            app.showFullScreen()
+        else
+            app.showNormal()
+    }
+
+    //
+    // Controls
+    //
     Rectangle {
         Layout.fillWidth: true
         Layout.fillHeight: true
@@ -57,93 +86,61 @@ ColumnLayout {
             color: "#858585"
         }
 
-        RowLayout {
-            spacing: 2 * app.spacing
+        ColumnLayout {
+            spacing: app.spacing
             anchors.centerIn: parent
 
-            GridLayout {
-                columns: 2
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                rowSpacing: app.spacing
-                columnSpacing: app.spacing
+            CheckBox {
+                id: enableLogging
+                text: qsTr("Save received data to disk")
+                checked: CSerialManager.fileLoggingEnabled
+                onCheckedChanged: CSerialManager.fileLoggingEnabled = checked
+            }
 
-                Label {
-                    text: qsTr("Baud Rate")
-                } ComboBox {
-                    currentIndex: 3
-                    model: [
-                        "1200",
-                        "2400",
-                        "4800",
-                        "9600",
-                        "19200",
-                        "38400",
-                        "57600",
-                        "15200",
-                    ]
-                }
+            CheckBox {
+                id: enableCsvLogging
+                checked: CDataParser.csvLoggingEnabled
+                text: qsTr("Save sensor readings to CSV file")
+                onCheckedChanged: CDataParser.csvLoggingEnabled = checked
+            }
 
-                Label {
-                    text: qsTr("Data Bits")
-                } ComboBox {
-                    model: [ 5, 6, 7, 8]
-                }
-
-                Label {
-                    text: qsTr("Parity")
-                } ComboBox {
-                    model: [
-                        qsTr("No Parity"),
-                        qsTr("Even Parity"),
-                        qsTr("Odd Parity"),
-                        qsTr("Space Parity"),
-                        qsTr("Mark Parity"),
-                    ]
-                }
-
-                Label {
-                    text: qsTr("Stop Bits")
-                } ComboBox {
-                    model: [
-                        qsTr("One Stop"),
-                        qsTr("One and Half Stop"),
-                        qsTr("Two Stop")
-                    ]
+            CheckBox {
+                id: fullscreen
+                checked: false
+                text: qsTr("Full-Screen UI")
+                onCheckedChanged: {
+                    if (checked)
+                        app.showFullScreen()
+                    else
+                        app.showNormal()
                 }
             }
 
-            ColumnLayout {
-                spacing: app.spacing
-                Layout.fillWidth: true
+            Item {
                 Layout.fillHeight: true
+            }
 
-                CheckBox {
-                    text: qsTr("Save received data to disk")
-                    checked: CSerialManager.fileLoggingEnabled
-                    onCheckedChanged: CSerialManager.fileLoggingEnabled = checked
-                }
+            Label {
+                text: qsTr("Baud Rate")
+            } ComboBox {
+                id: baudRate
+                currentIndex: 3
+                onCurrentIndexChanged: CSerialManager.setBaudRate(model[currentIndex])
 
-                CheckBox {
-                    checked: CDataParser.csvLoggingEnabled
-                    text: qsTr("Save sensor readings to CSV file")
-                    onCheckedChanged: CDataParser.csvLoggingEnabled = checked
-                }
+                model: [
+                    1200,
+                    2400,
+                    4800,
+                    9600,
+                    19200,
+                    38400,
+                    57600,
+                    15200,
+                ]
+            }
 
-                CheckBox {
-                    checked: false
-                    text: qsTr("Full-Screen UI")
-                    onCheckedChanged: {
-                        if (checked)
-                            app.showFullScreen()
-                        else
-                            app.showNormal()
-                    }
-                }
-
-                Item {
-                    Layout.fillHeight: true
-                }
+            Item {
+                Layout.fillHeight: true
             }
         }
     }

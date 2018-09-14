@@ -20,40 +20,23 @@
  * THE SOFTWARE.
  */
 
-import QtQuick 2.0
-import QtQuick.Layouts 1.0
-import QtQuick.Controls 2.0
+#ifndef APPQUITER_H
+#define APPQUITER_H
 
-RowLayout {
-    property string title: ""
-    property string units: ""
-    property string dataset: ""
+#include <QObject>
+#include <QGuiApplication>
 
-    spacing: app.spacing
-    Layout.fillWidth: true
-    Layout.fillHeight: true
+/**
+ * Used to allow the QML app to force the application to quit (thus ignoring
+ * the Window's attempt to block the application exit).
+ */
+class AppQuiter : public QObject {
+    Q_OBJECT
 
-    Item {
-        Layout.fillWidth: true
+public slots:
+    void closeApplication() {
+        qApp->quit();
     }
+};
 
-    Label {
-        color: "#72d5a3"
-        text: title + ":"
-        Layout.fillWidth: false
-        Layout.fillHeight: true
-        font.family: app.monoFont
-        horizontalAlignment: Label.AlignRight
-    }
-
-    Label {
-        color: "#72d5a3"
-        Layout.fillWidth: false
-        Layout.fillHeight: true
-        font.family: app.monoFont
-        textFormat: Text.RichText
-        horizontalAlignment: Label.AlignHCenter
-        Layout.minimumWidth: font.pixelSize * 5
-        text: CSerialManager.connected ? dataset + " " + units : "--.--"
-    }
-}
+#endif

@@ -30,6 +30,9 @@ import "../Components"
 ColumnLayout {
     spacing: app.spacing
 
+    //
+    // Title
+    //
     RowLayout {
         spacing: app.spacing
         Layout.fillWidth: true
@@ -50,6 +53,9 @@ ColumnLayout {
         }
     }
 
+    //
+    // HUD
+    //
     Rectangle {
         id: rect
         Layout.fillWidth: true
@@ -69,15 +75,51 @@ ColumnLayout {
                 margins: app.spacing
             }
 
-            Image {
-                Layout.alignment: Qt.AlignVCenter
-                source: "qrc:/images/satellite.svg"
-                sourceSize: {
-                    var length = Math.min(rect.height, rect.width) * 0.8
-                    return Qt.size(length, length)
+            //
+            // 'CanSat' heartbeat
+            //
+            GroupBox {
+                Layout.fillWidth: false
+                Layout.fillHeight: true
+                font.family: app.monoFont
+                Layout.margins: app.spacing
+                title: "// " + qsTr("CanSat Status")
+                Layout.preferredWidth: image.sourceSize.width
+
+                Connections {
+                    target: CSerialManager
+                    onPacketReceived: {
+                        timer.restart()
+                        image.opacity = 0.5
+                    }
+                }
+
+                Image {
+                    id: image
+                    anchors.centerIn: parent
+                    source: "qrc:/images/satellite.svg"
+                    opacity: CSerialManager.connected ? 0.25 : 0.1
+
+                    sourceSize: {
+                        var length = Math.min(rect.height, rect.width) * 0.8
+                        return Qt.size(length, length)
+                    }
+
+                    Behavior on opacity { NumberAnimation { duration: 500 } }
+
+                    Timer {
+                        id: timer
+                        repeat: true
+                        interval: 500
+                        Component.onCompleted: start()
+                        onTriggered: image.opacity = CSerialManager.connected ? 0.25 : 0.1
+                    }
                 }
             }
 
+            //
+            // Sensor readings
+            //
             DataGrid {
                 Layout.fillWidth: true
                 Layout.fillHeight: true

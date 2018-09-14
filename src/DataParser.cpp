@@ -31,10 +31,10 @@
  */
 static QVector<QVariant> EmptyDataPacket() {
     QVector<QVariant> packet;
-    const int packetItems = static_cast<int>(kChecksumCode);
+    const int packetItems = static_cast<int>(kChecksumCode) + 1;
 
     for (int i = 0; i < packetItems; ++i)
-        packet.append(QVariant (0));
+        packet.append(QVariant(0));
 
     return packet;
 }
@@ -63,14 +63,23 @@ DataParser::DataParser() :
              this, &DataParser::onPacketError);
 }
 
+/**
+ * @returns the number of satellites resets
+ */
 int DataParser::resetCount() const {
     return m_resetCount;
 }
 
+/**
+ * @returns the number of packet reading errors
+ */
 int DataParser::errorCount() const {
     return m_errorCount;
 }
 
+/**
+ * @returns the number of packets that were successfully read
+ */
 int DataParser::successCount() const {
     return m_successCount;
 }

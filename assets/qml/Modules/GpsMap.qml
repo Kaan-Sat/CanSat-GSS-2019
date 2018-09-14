@@ -22,7 +22,7 @@
 
 import QtQuick 2.0
 import QtLocation 5.11
-import QtPositioning 5.6
+import QtPositioning 5.11
 import QtQuick.Layouts 1.0
 import QtQuick.Controls 2.0
 import QtQuick.Controls.Universal 2.0
@@ -31,16 +31,54 @@ ColumnLayout {
     spacing: app.spacing
     Component.onCompleted: centerMap()
 
+    //
+    // Will be true if GPS coordinates are different from (0,0)
+    //
+    readonly property bool gpsWorking: CDataParser.gpsLatitude !== 0 ||
+                                       CDataParser.gpsLongitude !== 0
+
+    //
+    // Location of Queretaro (aguacatosas!!!)
+    //
+    readonly property var qroCoordinates: QtPositioning.coordinate(
+                                              20.5846129, -100.385372)
+
+    //
+    // Real-time position
+    //
+    readonly property var gpsCoordinates: QtPositioning.coordinate(
+                                              CDataParser.gpsLatitude,
+                                              CDataParser.gpsLongitude)
+
+    //
+    // Center map when connecting with CanSat
+    //
     Connections {
         target: CSerialManager
         onConnectionSuccess: centerMap()
     }
 
+    //
+    // Centers the map to Queretaro if the GPS is not working,
+    // otherwise, centers the map to the CanSat's position
+    //
     function centerMap() {
-        map.zoomLevel = map.maximumZoomLevel - 2
-        map.center = QtPositioning.coordinate(CDataParser.gpsLatitude, CDataParser.gpsLongitude)
+        // GPS not responding, go to QRO
+        if (!gpsWorking) {
+            map.center = qroCoordinates
+            map.zoomLevel = (map.minimumZoomLevel + map.maximumZoomLevel) / 2
+        }
+
+        // Show GPS position
+        else {
+            map.center = gpsCoordinates
+            map.zoomLevel = map.maximumZoomLevel - 2
+        }
     }
 
+    //
+    // Controls
+    //
     RowLayout {
         spacing: app.spacing
         Layout.fillWidth: true
@@ -59,7 +97,7 @@ ColumnLayout {
 
             textRole: "description"
             model: map.supportedMapTypes
-            Component.onCompleted: currentIndex = 4
+            Component.onCompleted: currentIndex = 5
             onCurrentIndexChanged: map.activeMapType = map.supportedMapTypes[currentIndex]
         }
 
@@ -70,6 +108,9 @@ ColumnLayout {
         }
     }
 
+    //
+    // Map
+    //
     Rectangle {
         Layout.fillWidth: true
         Layout.fillHeight: true
@@ -82,22 +123,24 @@ ColumnLayout {
 
         Map {
             id: map
-
-            anchors {
-                fill: parent
-                margins: app.spacing
-            }
-
+            anchors.fill: parent
             copyrightsVisible: false
             color: Universal.background
+            anchors.margins: parent.border.width
 
-            MapCircle {
-                radius: 5
-                color: "#f00"
-                opacity: 0.850
-                border.width: 3
-                Component.onCompleted: parent.addMapItem(this)
-                center: QtPositioning.coordinate(CDataParser.gpsLatitude, CDataParser.gpsLongitude)
+            MapQuickItem {
+                sourceItem: Rectangle {
+                    width: 20
+                    height: 20
+                    color: "#f00"
+                    border.width: 2
+                    radius: width / 2
+                    border.color: "#fff"
+                }
+
+                coordinate: gpsWorking ? gpsCoordinates : qroCoordinates
+                anchorPoint: Qt.point(sourceItem.width / 2,
+                                      sourceItem.height/ 2)
             }
 
             plugin: Plugin {

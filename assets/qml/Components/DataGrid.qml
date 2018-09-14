@@ -36,7 +36,7 @@ GridLayout {
     //
     GroupBox {
         font.family: app.monoFont
-        title: qsTr("Mission Status")
+        title: "// " + qsTr("Mission Status")
         Layout.fillWidth: true
         Layout.fillHeight: true
 
@@ -81,7 +81,7 @@ GridLayout {
     //
     GroupBox {
         font.family: app.monoFont
-        title: qsTr("Sensor Readings")
+        title: "// " + qsTr("Sensor Readings")
         Layout.fillWidth: true
         Layout.fillHeight: true
 
@@ -123,7 +123,7 @@ GridLayout {
     //
     GroupBox {
         font.family: app.monoFont
-        title: qsTr("Accelerometer")
+        title: "// " + qsTr("Accelerometer")
         Layout.fillWidth: true
         Layout.fillHeight: true
 
@@ -133,19 +133,19 @@ GridLayout {
 
             DataLabel {
                 title: "X"
-                units: "m/s^2"
+                units: "m/s<sup>2</sup>"
                 dataset: CDataParser.accelerometer.x
             }
 
             DataLabel {
                 title: "Y"
-                units: "m/s^2"
+                units: "m/s<sup>2</sup>"
                 dataset: CDataParser.accelerometer.y
             }
 
             DataLabel {
                 title: "Z"
-                units: "m/s^2"
+                units: "m/s<sup>2</sup>"
                 dataset: CDataParser.accelerometer.z
             }
         }
@@ -156,7 +156,7 @@ GridLayout {
     //
     GroupBox {
         font.family: app.monoFont
-        title: qsTr("Gyroscope")
+        title: "// " + qsTr("Gyroscope")
         Layout.fillWidth: true
         Layout.fillHeight: true
 
@@ -166,19 +166,19 @@ GridLayout {
 
             DataLabel {
                 title: "X"
-                units: "m/s^2"
+                units: "rad/s"
                 dataset: CDataParser.gyroscope.x
             }
 
             DataLabel {
                 title: "Y"
-                units: "m/s^2"
+                units: "rad/s"
                 dataset: CDataParser.gyroscope.y
             }
 
             DataLabel {
                 title: "Z"
-                units: "m/s^2"
+                units: "rad/s"
                 dataset: CDataParser.gyroscope.z
             }
         }
@@ -189,7 +189,7 @@ GridLayout {
     //
     GroupBox {
         font.family: app.monoFont
-        title: qsTr("GPS")
+        title: "// " + qsTr("GPS")
         Layout.fillWidth: true
         Layout.fillHeight: true
 
@@ -236,7 +236,7 @@ GridLayout {
     //
     GroupBox {
         font.family: app.monoFont
-        title: qsTr("Satellite Health")
+        title: "// " + qsTr("Satellite Health")
         Layout.fillWidth: true
         Layout.fillHeight: true
 
