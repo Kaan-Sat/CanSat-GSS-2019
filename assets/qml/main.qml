@@ -35,8 +35,8 @@ ApplicationWindow {
     // Application constants
     //
     readonly property int spacing: 8
-    readonly property string monoFont: "Hack"
     readonly property string invalidData: "--.--"
+    readonly property string monoFont: loader.name
 
     //
     // Window options
@@ -44,8 +44,8 @@ ApplicationWindow {
     x: 100
     y: 100
     title: AppName
-    minimumWidth: 1120
-    minimumHeight: 720
+    minimumWidth: 1024
+    minimumHeight: 680
     width: minimumWidth
     height: minimumHeight
 
@@ -75,13 +75,20 @@ ApplicationWindow {
     Universal.accent: Universal.Amber
 
     //
+    // Mono font loader
+    //
+    FontLoader {
+        id: loader
+        source: "qrc:/fonts/source-code-pro.ttf"
+    }
+
+    //
     // UI module
     //
     UI {
         anchors.fill: parent
         anchors.margins: app.spacing
     }
-
 
     //
     // Connection status dialog

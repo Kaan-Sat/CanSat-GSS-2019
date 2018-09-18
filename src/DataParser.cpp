@@ -393,12 +393,12 @@ void DataParser::parsePacket(const QByteArray& packet) {
 
         // If current packet mision time is less than last packet, then a
         // a satellite reset ocurred
-        if (missionTime() > info.at(kMisionTime).toUInt())
+        if (missionTime() >= info.at(kMisionTime).toUInt())
             emit satelliteReset();
         
         // If received packet ID is smaller than the last packet ID, then a
         // satellite reset has ocurred.
-        else if (packetCount() > info.at(kPacketCount).toInt())
+        else if (packetCount() >= info.at(kPacketCount).toInt())
             emit satelliteReset();
 
         // Update current packet

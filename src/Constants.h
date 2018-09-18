@@ -45,7 +45,7 @@ static const QChar EOT_PRIMARY = QChar('\0');
  *     an array of packets (using @c EOT_CHAR)
  *   - We can detect and manage incomplete packets (using @c EOT_CHAR_SECONDARY)
  */
-static const QChar EOT_SECONDARY = QChar(';');
+static const QChar EOT_SECONDARY = QChar('\n');
 
 /**
  * Define data separator character

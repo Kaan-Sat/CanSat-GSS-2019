@@ -40,6 +40,7 @@ RowLayout {
     Label {
         color: "#72d5a3"
         text: title + ":"
+        font.pixelSize: 12
         Layout.fillWidth: false
         Layout.fillHeight: true
         font.family: app.monoFont
@@ -48,6 +49,7 @@ RowLayout {
 
     Label {
         color: "#72d5a3"
+        font.pixelSize: 12
         Layout.fillWidth: false
         Layout.fillHeight: true
         font.family: app.monoFont

@@ -351,11 +351,7 @@ void SerialManager::formatReceivedPacket(const QByteArray& packet) {
     QString tm = QDateTime::currentDateTime().toString("hh:mm:ss::zzz");
 
     // Add timestamp and line data
-    QString format = QString("<font face=\"hack\">"
-                             "<font face=\"hack\" color=\"#bbb\">"
-                             "[%1]</font>&nbsp;"
-                             "<xmp>%2</xmp></font><br/>")
-            .arg(tm, QString::fromUtf8(packet));
+    QString format = QString("[%1] %2").arg(tm, QString::fromUtf8(packet));
 
     // Write received data to log file
     if (packetLogAvailable()) {

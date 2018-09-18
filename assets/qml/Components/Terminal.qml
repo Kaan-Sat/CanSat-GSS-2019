@@ -61,9 +61,11 @@ Item {
             id: _textDisplay
             readOnly: true
             color: "#72d5a3"
+            font.pixelSize: 12
             anchors.fill: parent
+            font.family: app.monoFont
+            textFormat: Text.PlainText
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-            textFormat: TextArea.RichText
             placeholderText: qsTr("No data received so far") + "..."
 
             onLineCountChanged: {

@@ -104,4 +104,5 @@ DISTFILES += \
 RESOURCES += \
     assets/qml/qml.qrc \
     assets/images/images.qrc \
-    assets/icons/icons.qrc
+    assets/icons/icons.qrc \
+    assets/fonts/fonts.qrc

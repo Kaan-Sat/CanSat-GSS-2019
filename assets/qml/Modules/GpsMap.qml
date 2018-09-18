@@ -34,16 +34,20 @@ ColumnLayout {
     Component.onCompleted: centerMap()
 
     //
+    // Real-time GPS coordinates components
+    //
+    property real latitude: CDataParser.gpsLatitude
+    property real longitude: CDataParser.gpsLongitude
+
+    //
     // Will be true if GPS coordinates are different from (0,0)
     //
-    readonly property bool gpsWorking: CDataParser.gpsLatitude !== 0 ||
-                                       CDataParser.gpsLongitude !== 0
+    readonly property bool gpsWorking: latitude != 0 || longitude != 0
 
     //
     // Location of Queretaro
     //
-    readonly property var qroCoordinates: QtPositioning.coordinate(
-                                              20.5846129, -100.385372)
+    readonly property var qroCoordinates: QtPositioning.coordinate(20.5846129, -100.385372)
 
     //
     // Used to know if we need to center the map
@@ -53,9 +57,7 @@ ColumnLayout {
     //
     // Real-time position
     //
-    readonly property var gpsCoordinates: QtPositioning.coordinate(
-                                              CDataParser.gpsLatitude,
-                                              CDataParser.gpsLongitude)
+    readonly property var gpsCoordinates: QtPositioning.coordinate(latitude, longitude)
 
     //
     // Center map when connecting with CanSat
