@@ -27,6 +27,8 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls 2.0
 import QtQuick.Controls.Universal 2.0
 
+import Qt.labs.settings 1.0
+
 ColumnLayout {
     spacing: app.spacing
     Component.onCompleted: centerMap()
@@ -38,7 +40,7 @@ ColumnLayout {
                                        CDataParser.gpsLongitude !== 0
 
     //
-    // Location of Queretaro (aguacatosas!!!)
+    // Location of Queretaro
     //
     readonly property var qroCoordinates: QtPositioning.coordinate(
                                               20.5846129, -100.385372)
@@ -86,6 +88,13 @@ ColumnLayout {
     }
 
     //
+    // Save settings between runs
+    //
+    Settings {
+        property alias mapType: mapTypeSelector.currentIndex
+    }
+
+    //
     // Controls
     //
     RowLayout {
@@ -102,11 +111,10 @@ ColumnLayout {
         }
 
         ComboBox {
-            Layout.preferredWidth: 250
-
+            id: mapTypeSelector
             textRole: "description"
+            Layout.preferredWidth: 250
             model: map.supportedMapTypes
-            Component.onCompleted: currentIndex = 5
             onCurrentIndexChanged: map.activeMapType = map.supportedMapTypes[currentIndex]
         }
 
