@@ -24,7 +24,7 @@
 #define APP_INFO_H
 
 #define APP_NAME            "CanSat Ground Station"
-#define APP_VERSION         "1.0"
+#define APP_VERSION         "2.0"
 #define ORGANIZATION_NAME   "Ka'an Sat"
 
 #endif

@@ -90,13 +90,6 @@ ColumnLayout {
                 Layout.fillWidth: true
                 highlighted: swipeView.currentIndex === 2
                 onClicked: swipeView.currentIndex = 2
-                icon.source: "qrc:/icons/map.svg"
-            }
-
-            Button {
-                Layout.fillWidth: true
-                highlighted: swipeView.currentIndex === 3
-                onClicked: swipeView.currentIndex = 3
                 icon.source: "qrc:/icons/settings.svg"
             }
 
@@ -159,10 +152,6 @@ ColumnLayout {
 
         Logger {
             id: logger
-        }
-
-        GpsMap {
-            id: gpsMap
         }
 
         Configuration {

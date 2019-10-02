@@ -54,24 +54,20 @@ Item {
     //
     // Text display
     //
-    ScrollView {
+    TextArea {
+        id: _textDisplay
+        readOnly: true
+        color: "#72d5a3"
+        font.pixelSize: 12
         anchors.fill: parent
+        font.family: app.monoFont
+        textFormat: Text.PlainText
+        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+        placeholderText: qsTr("No data received so far") + "..."
 
-        TextArea {
-            id: _textDisplay
-            readOnly: true
-            color: "#72d5a3"
-            font.pixelSize: 12
-            anchors.fill: parent
-            font.family: app.monoFont
-            textFormat: Text.PlainText
-            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-            placeholderText: qsTr("No data received so far") + "..."
-
-            onLineCountChanged: {
-                if (lineCount > scrollback)
-                    remove(0, length / 2)
-            }
+        onLineCountChanged: {
+            if (lineCount > scrollback)
+                remove(0, length / 2)
         }
     }
 }

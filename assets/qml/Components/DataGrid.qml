@@ -74,6 +74,11 @@ GridLayout {
             }
 
             DataLabel {
+                title: qsTr("Parachute Status")
+                dataset: CDataParser.parachuteStatus ? qsTr("Open") : qsTr("Closed")
+            }
+
+            DataLabel {
                 title: qsTr("Checksum")
                 dataset: (CDataParser.checksum).toString(16)
             }
@@ -99,25 +104,33 @@ GridLayout {
             }
 
             DataLabel {
-                units: "ATM"
+                units: "KPa"
                 title: qsTr("Pressure")
-                dataset: CDataParser.atmosphericPressure
+                dataset: CDataParser.atmosphericPressure / 1000.0
             }
 
             DataLabel {
                 units: "°C"
-                title: qsTr("Temperature")
-                dataset: CDataParser.temperature
+                title: qsTr("Internal Temperature")
+                dataset: CDataParser.intTemperature
             }
 
             DataLabel {
-                title: qsTr("Relative Humidity")
-                dataset: CDataParser.relativeHumidity + "%"
+                units: "°C"
+                title: qsTr("External Temperature")
+                dataset: CDataParser.extTemperature
             }
 
             DataLabel {
-                title: qsTr("UV Index")
-                dataset: CDataParser.uvRadiationIndex
+                units: "?"
+                title: qsTr("Air Quality")
+                dataset: CDataParser.airQuality
+            }
+
+            DataLabel {
+                units: "?"
+                title: qsTr("Carbon Monoxide")
+                dataset: CDataParser.carbonMonoxide
             }
         }
     }
@@ -156,11 +169,11 @@ GridLayout {
     }
 
     //
-    // Gyroscope
+    // Magnetometer
     //
     GroupBox {
         font.family: app.monoFont
-        title: "// " + qsTr("Gyroscope")
+        title: "// " + qsTr("Magnetometer")
         Layout.fillWidth: true
         Layout.fillHeight: true
 
@@ -170,20 +183,20 @@ GridLayout {
 
             DataLabel {
                 title: "X"
-                units: "rad/s"
-                dataset: CDataParser.gyroscope.x
+                units: "μT"
+                dataset: CDataParser.magnetometer.x
             }
 
             DataLabel {
                 title: "Y"
-                units: "rad/s"
-                dataset: CDataParser.gyroscope.y
+                units: "μT"
+                dataset: CDataParser.magnetometer.y
             }
 
             DataLabel {
                 title: "Z"
-                units: "rad/s"
-                dataset: CDataParser.gyroscope.z
+                units: "μT"
+                dataset: CDataParser.magnetometer.z
             }
         }
     }
@@ -205,12 +218,6 @@ GridLayout {
                 units: "m"
                 title: qsTr("Altitude")
                 dataset: CDataParser.gpsAltitude
-            }
-
-            DataLabel {
-                units: "m/s"
-                title: qsTr("Velocity")
-                dataset: CDataParser.gpsVelocity
             }
 
             DataLabel {

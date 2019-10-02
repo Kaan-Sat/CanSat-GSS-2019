@@ -83,41 +83,12 @@ ColumnLayout {
                 Layout.fillHeight: true
                 font.family: app.monoFont
                 Layout.margins: app.spacing
-                title: "// " + qsTr("CanSat Status")
-                Layout.preferredWidth: image.sourceSize.width
+                title: "// " + qsTr("GPS Map")
 
-                Connections {
-                    target: CSerialManager
-                    onPacketReceived: {
-                        timer.restart()
-                        image.opacity = 0.5
-                    }
-                }
-
-                Image {
-                    id: image
-                    anchors.centerIn: parent
-                    source: "qrc:/images/satellite.svg"
-                    opacity: CSerialManager.connected ? 0.25 : 0.1
-
-                    sourceSize: {
-                        var length = app.height * 0.6
-
-                        if (app.height > app.width)
-                            length = app.width * 0.4
-
-                        return Qt.size(length, length)
-                    }
-
-                    Behavior on opacity { NumberAnimation { duration: 500 } }
-
-                    Timer {
-                        id: timer
-                        repeat: true
-                        interval: 500
-                        Component.onCompleted: start()
-                        onTriggered: image.opacity = CSerialManager.connected ? 0.25 : 0.1
-                    }
+                GpsMap {
+                    anchors.fill: parent
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
                 }
             }
 

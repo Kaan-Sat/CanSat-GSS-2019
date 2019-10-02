@@ -36,7 +36,7 @@
  * This is used to determine when we have received a full packet from the
  * CanSat.
  */
-static const QChar EOT_PRIMARY = QChar('\0');
+static const QChar EOT_PRIMARY = QChar('\n');
 
 /**
  * Defines the next-to-last character of each packet.
@@ -45,7 +45,7 @@ static const QChar EOT_PRIMARY = QChar('\0');
  *     an array of packets (using @c EOT_CHAR)
  *   - We can detect and manage incomplete packets (using @c EOT_CHAR_SECONDARY)
  */
-static const QChar EOT_SECONDARY = QChar('\n');
+static const QChar EOT_SECONDARY = QChar('\r');
 
 /**
  * Define data separator character
@@ -85,26 +85,29 @@ typedef enum {
     kHeader,
     kTeamID,
     kPacketCount,
-    kMisionTime,
     kAltitude,
-    kBatteryVoltage,
-    kRelativeHumidity,
-    kUvRadiationIndex,
-    kTemperature,
     kAtmPressure,
+    kBatteryVoltage,
+    kIntTemperature,
+    kExtTemperature,
+    kAirQuality,
+    kCarbonMonoxide,
     kGpsTime,
-    kGpsVelocity,
+    kGpsLongitudeDeg,
+    kGpsLongitudeMin,
+    kGpsLatitudeDeg,
+    kGpsLatitudeMin,
     kGpsAltitude,
-    kGpsLatitude,
-    kGpsLongitude,
     kGpsSatelliteCount,
     kAccelerometerX,
     kAccelerometerY,
     kAccelerometerZ,
-    kGyroscopeX,
-    kGyroscopeY,
-    kGyroscopeZ,
-    kChecksumCode,
+    kMagnetometerX,
+    kMagnetometerY,
+    kMagnetometerZ,
+    kMisionTime,
+    kParachute,
+    kChecksumCode
 } DataPosition;
 
 #endif

@@ -36,7 +36,12 @@ ApplicationWindow {
     //
     readonly property int spacing: 8
     readonly property string invalidData: "--.--"
-    readonly property string monoFont: loader.name
+    readonly property string monoFont: {
+        if (Qt.platform.os == "osx")
+            return "Menlo"
+
+        return loader.name
+    }
 
     //
     // Window options
@@ -73,6 +78,13 @@ ApplicationWindow {
     Material.theme: Material.Dark
     Universal.theme: Universal.Dark
     Universal.accent: Universal.Amber
+
+    //
+    // Background
+    //
+    background: Rectangle {
+        color: "#1a1a1a"
+    }
 
     //
     // Mono font loader

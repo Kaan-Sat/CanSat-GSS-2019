@@ -31,7 +31,7 @@
  */
 static QVector<QVariant> EmptyDataPacket() {
     QVector<QVariant> packet;
-    const int packetItems = static_cast<int>(kChecksumCode) + 1;
+    const int packetItems = static_cast<int>(kChecksumCode);
 
     for (int i = 0; i < packetItems; ++i)
         packet.append(QVariant(0));
@@ -121,31 +121,46 @@ double DataParser::batteryVoltage() const {
 }
 
 /**
- * @returns the relative humidity detected by the CanSat
+ * @returns the air quality readings of the CanSat
  */
-double DataParser::relativeHumidity() const {
-    return RoundDbl(m_data.at(kRelativeHumidity).toDouble());
+double DataParser::airQuality() const {
+    return RoundDbl(m_data.at(kAirQuality).toDouble());
 }
 
 /**
- * @returns the UV radiation index detected by the CanSat
+ * @returns the carbon monoxide readings of the CanSat
  */
-double DataParser::uvRadiationIndex() const {
-    return RoundDbl(m_data.at(kUvRadiationIndex).toDouble());
+double DataParser::carbonMonoxide() const {
+    return RoundDbl(m_data.at(kCarbonMonoxide).toDouble());
 }
 
 /**
  * @returns the internal temperature of the CanSat in Kelvins
  */
-double DataParser::temperature() const {
-    return RoundDbl(m_data.at(kTemperature).toDouble());
+double DataParser::intTemperature() const {
+    return RoundDbl(m_data.at(kIntTemperature).toDouble());
 }
+
+/**
+ * @returns the external temperature of the CanSat in Kelvins
+ */
+double DataParser::extTemperature() const {
+    return RoundDbl(m_data.at(kExtTemperature).toDouble());
+}
+
 
 /**
  * @returns the atmospheric pressure in millibars
  */
 double DataParser::atmosphericPressure() const {
     return RoundDbl(m_data.at(kAtmPressure).toDouble());
+}
+
+/**
+ * @returns the parachute deployment status
+ */
+bool DataParser::parachuteStatus() const {
+    return m_data.at(kParachute).toInt() != 0;
 }
 
 /**
@@ -158,31 +173,26 @@ QString DataParser::gpsTime() const {
 }
 
 /**
- * @returns the calculated velocity based on GPS readings
- */
-double DataParser::gpsVelocity() const {
-    return m_data.at(kGpsVelocity).toDouble();
-}
-
-/**
  * @returns the calculated altitude based on GPS readings
  */
 double DataParser::gpsAltitude() const {
-    return m_data.at(kGpsAltitude).toDouble();
+    return RoundDbl(m_data.at(kGpsAltitude).toDouble());
 }
 
 /**
  * @returns the calculated latitude based on GPS readings
  */
 double DataParser::gpsLatitude() const {
-    return m_data.at(kGpsLatitude).toDouble();
+    return RoundDbl(m_data.at(kGpsLatitudeDeg).toDouble() +
+                    m_data.at(kGpsLatitudeMin).toDouble() / 60.0);
 }
 
 /**
  * @returns the calculated longitude based on GPS readings
  */
 double DataParser::gpsLongitude() const {
-    return m_data.at(kGpsLongitude).toDouble();
+    return RoundDbl(m_data.at(kGpsLongitudeDeg).toDouble() +
+                    m_data.at(kGpsLongitudeMin).toDouble() / 60.0);
 }
 
 /**
@@ -196,11 +206,11 @@ int DataParser::gpsSatelliteCount() const {
  * @returns a vector with the (x,y,z) readings of the gyroscope
  *          sensor
  */
-QVector3D DataParser::gyroscopeData() const {
+QVector3D DataParser::magnetomerData() const {
     QVector3D vector;
-    vector.setX(m_data.at(kGyroscopeX).toFloat());
-    vector.setY(m_data.at(kGyroscopeY).toFloat());
-    vector.setZ(m_data.at(kGyroscopeZ).toFloat());
+    vector.setX(m_data.at(kMagnetometerX).toFloat());
+    vector.setY(m_data.at(kMagnetometerY).toFloat());
+    vector.setZ(m_data.at(kMagnetometerZ).toFloat());
     return vector;
 }
 
@@ -219,7 +229,10 @@ QVector3D DataParser::accelerometerData() const {
  * @returns the CRC32 checksum code of the last packet
  */
 quint32 DataParser::checksum() const {
-    return m_data.at(kChecksumCode).toUInt();
+    if (ENABLE_CRC32)
+        return m_data.at(kChecksumCode).toUInt();
+    else
+        return -1;
 }
 
 /**
@@ -355,25 +368,27 @@ void DataParser::parsePacket(const QByteArray& packet) {
                     QVariant(data.at(kAltitude).toDouble()));
         info.insert(kBatteryVoltage,
                     QVariant(data.at(kBatteryVoltage).toDouble()));
-        info.insert(kRelativeHumidity,
-                    QVariant(data.at(kRelativeHumidity).toDouble()));
-        info.insert(kUvRadiationIndex,
-                    QVariant(data.at(kUvRadiationIndex).toDouble()));
-        info.insert(kTemperature,
-                    QVariant(data.at(kTemperature).toDouble()));
+        info.insert(kIntTemperature,
+                    QVariant(data.at(kIntTemperature).toDouble()));
+        info.insert(kExtTemperature,
+                    QVariant(data.at(kExtTemperature).toDouble()));
+        info.insert(kAirQuality,
+                    QVariant(data.at(kAirQuality).toDouble()));
+        info.insert(kCarbonMonoxide,
+                    QVariant(data.at(kCarbonMonoxide).toDouble()));
         info.insert(kAtmPressure,
                     QVariant(data.at(kAtmPressure).toDouble()));
         info.insert(kGpsTime, QVariant(unixTime));
         info.insert(kGpsAltitude,
                     QVariant(data.at(kGpsAltitude).toDouble()));
-        info.insert(kGpsVelocity,
-                    QVariant(data.at(kGpsVelocity).toDouble()));
-        info.insert(kGpsAltitude,
-                    QVariant(data.at(kGpsAltitude).toDouble()));
-        info.insert(kGpsLatitude,
-                    QVariant(data.at(kGpsLatitude).toDouble()));
-        info.insert(kGpsLongitude,
-                    QVariant(data.at(kGpsLongitude).toDouble()));
+        info.insert(kGpsLatitudeMin,
+                    QVariant(data.at(kGpsLatitudeMin).toDouble()));
+        info.insert(kGpsLongitudeMin,
+                    QVariant(data.at(kGpsLongitudeMin).toDouble()));
+        info.insert(kGpsLatitudeDeg,
+                    QVariant(data.at(kGpsLatitudeDeg).toDouble()));
+        info.insert(kGpsLongitudeDeg,
+                    QVariant(data.at(kGpsLongitudeDeg).toDouble()));
         info.insert(kGpsSatelliteCount,
                     QVariant(data.at(kGpsSatelliteCount)));
         info.insert(kAccelerometerX,
@@ -382,14 +397,17 @@ void DataParser::parsePacket(const QByteArray& packet) {
                     QVariant(data.at(kAccelerometerY).toDouble()));
         info.insert(kAccelerometerZ,
                     QVariant(data.at(kAccelerometerZ).toDouble()));
-        info.insert(kGyroscopeX,
-                    QVariant(data.at(kGyroscopeX).toDouble()));
-        info.insert(kGyroscopeY,
-                    QVariant(data.at(kGyroscopeY).toDouble()));
-        info.insert(kGyroscopeZ,
-                    QVariant(data.at(kGyroscopeZ).toDouble()));
-        info.insert(kChecksumCode,
-                    QVariant(data.at(kChecksumCode).toUInt()));
+        info.insert(kMagnetometerX,
+                    QVariant(data.at(kMagnetometerX).toDouble()));
+        info.insert(kMagnetometerY,
+                    QVariant(data.at(kMagnetometerY).toDouble()));
+        info.insert(kMagnetometerZ,
+                    QVariant(data.at(kMagnetometerZ).toDouble()));
+        info.insert(kParachute,
+                    QVariant(data.at(kParachute)).toInt());
+        if (ENABLE_CRC32)
+            info.insert(kChecksumCode,
+                        QVariant(data.at(kChecksumCode).toUInt()));
 
         // If current packet mision time is less than last packet, then a
         // a satellite reset ocurred
@@ -437,7 +455,7 @@ void DataParser::onSatelliteReset() {
  */
 void DataParser::saveCsvData() {
     if (csvLoggingEnabled()) {
-
+        // Gagaga :(
     }
 }
 

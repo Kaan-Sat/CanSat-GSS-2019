@@ -148,6 +148,10 @@ void SerialManager::setBaudRate(const int rate) {
     }
 }
 
+/**
+ * @brief SerialManager::startComm
+ * @param device
+ */
 void SerialManager::startComm(const int device) {
     // Disconnect current serial port device
     disconnectDevice();
@@ -187,6 +191,10 @@ void SerialManager::startComm(const int device) {
     }
 }
 
+/**
+ * @brief SerialManager::enableFileLogging
+ * @param enabled
+ */
 void SerialManager::enableFileLogging(const bool enabled) {
     // Save previous value
     bool previousValue = fileLoggingEnabled();
@@ -206,6 +214,9 @@ void SerialManager::enableFileLogging(const bool enabled) {
     emit fileLoggingEnabledChanged();
 }
 
+/**
+ * @brief SerialManager::onDataReceived
+ */
 void SerialManager::onDataReceived() {
     // Check serial port pointer
     if (!m_port)
@@ -279,6 +290,9 @@ void SerialManager::disconnectDevice() {
     emit connectionChanged();
 }
 
+/**
+ * @brief SerialManager::configureLogFile
+ */
 void SerialManager::configureLogFile() {
     // Close log file
     if (m_packetLog.isOpen())
@@ -321,6 +335,9 @@ void SerialManager::configureLogFile() {
         m_packetLog.close();
 }
 
+/**
+ * @brief SerialManager::refreshSerialDevices
+ */
 void SerialManager::refreshSerialDevices() {
     // Create list starting with invalid virtual device
     QStringList devices;
@@ -342,33 +359,40 @@ void SerialManager::refreshSerialDevices() {
     QTimer::singleShot(1000, this, &SerialManager::refreshSerialDevices);
 }
 
+/**
+ * @brief SerialManager::formatReceivedPacket
+ * @param packet
+ */
 void SerialManager::formatReceivedPacket(const QByteArray& packet) {
     // Do not take into account empty packets
     if (packet.isEmpty())
         return;
 
-    // Get current time
-    QString tm = QDateTime::currentDateTime().toString("hh:mm:ss::zzz");
-
-    // Add timestamp and line data
-    QString format = QString("[%1] %2").arg(tm, QString::fromUtf8(packet));
-
     // Write received data to log file
     if (packetLogAvailable()) {
         if (m_packetLog.open(QFile::Append)) {
-            m_packetLog.write(format.toUtf8());
+            m_packetLog.write(packet);
             m_packetLog.close();
         }
     }
 
     // Notify application
-    emit packetLogged(format);
+    emit packetLogged(QString::fromUtf8(packet));
 }
 
+/**
+ * @brief SerialManager::packetLogAvailable
+ * @return
+ */
 bool SerialManager::packetLogAvailable() const {
     return !m_packetLog.fileName().isEmpty() && fileLoggingEnabled();
 }
 
+/**
+ * @brief SerialManager::sizeStr
+ * @param bytes
+ * @return
+ */
 QString SerialManager::sizeStr(const qint64 bytes) const {
     QString units;
     double size = bytes;

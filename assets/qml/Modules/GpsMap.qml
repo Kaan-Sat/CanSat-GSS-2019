@@ -103,19 +103,11 @@ ColumnLayout {
         spacing: app.spacing
         Layout.fillWidth: true
 
-        Label {
-            font.pixelSize: 24
-            text: qsTr("GPS Map")
-        }
-
-        Item {
-            Layout.fillWidth: true
-        }
-
         ComboBox {
             id: mapTypeSelector
             textRole: "description"
-            Layout.preferredWidth: 250
+            Layout.fillWidth: true
+            Layout.preferredWidth: 340
             model: map.supportedMapTypes
             onCurrentIndexChanged: map.activeMapType = map.supportedMapTypes[currentIndex]
         }
@@ -148,14 +140,44 @@ ColumnLayout {
             anchors.margins: parent.border.width
             zoomLevel: (map.minimumZoomLevel + map.maximumZoomLevel) / 2
 
+            Image {
+                sourceSize.width: 120
+                source: "qrc:/images/unaq.png"
+                anchors {
+                    margins: app.spacing
+                    left: parent.left
+                    bottom: parent.bottom
+                }
+            }
+
             MapQuickItem {
                 sourceItem: Rectangle {
+                    id: dot
                     width: 20
                     height: 20
+                    opacity: 0.1
                     color: "#f00"
                     border.width: 2
                     radius: width / 2
                     border.color: "#fff"
+
+                    Connections {
+                        target: CSerialManager
+                        onPacketReceived: {
+                            timer.restart()
+                            dot.opacity = 0.8
+                        }
+                    }
+
+                    Behavior on opacity { NumberAnimation { duration: 500 } }
+
+                    Timer {
+                        id: timer
+                        repeat: true
+                        interval: 500
+                        Component.onCompleted: start()
+                        onTriggered: dot.opacity = CSerialManager.connected ? 0.25 : 0.1
+                    }
                 }
 
                 coordinate: gpsWorking ? gpsCoordinates : qroCoordinates

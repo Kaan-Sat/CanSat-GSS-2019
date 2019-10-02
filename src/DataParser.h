@@ -47,23 +47,17 @@ class DataParser : public QObject {
     Q_PROPERTY(double voltage
                READ batteryVoltage
                NOTIFY dataParsed)
-    Q_PROPERTY(double relativeHumidity
-               READ relativeHumidity
+    Q_PROPERTY(double intTemperature
+               READ intTemperature
                NOTIFY dataParsed)
-    Q_PROPERTY(double uvRadiationIndex
-               READ uvRadiationIndex
-               NOTIFY dataParsed)
-    Q_PROPERTY(double temperature
-               READ temperature
+    Q_PROPERTY(double extTemperature
+               READ extTemperature
                NOTIFY dataParsed)
     Q_PROPERTY(double atmosphericPressure
                READ atmosphericPressure
                NOTIFY dataParsed)
     Q_PROPERTY(QString gpsTime
                READ gpsTime
-               NOTIFY dataParsed)
-    Q_PROPERTY(double gpsVelocity
-               READ gpsVelocity
                NOTIFY dataParsed)
     Q_PROPERTY(double gpsAltitude
                READ gpsAltitude
@@ -77,11 +71,20 @@ class DataParser : public QObject {
     Q_PROPERTY(int gpsSatelliteCount
                READ gpsSatelliteCount
                NOTIFY dataParsed)
-    Q_PROPERTY(QVector3D gyroscope
-               READ gyroscopeData
+    Q_PROPERTY(QVector3D magnetometer
+               READ magnetomerData
                NOTIFY dataParsed)
     Q_PROPERTY(QVector3D accelerometer
                READ accelerometerData
+               NOTIFY dataParsed)
+    Q_PROPERTY(bool parachuteStatus
+               READ parachuteStatus
+               NOTIFY dataParsed)
+    Q_PROPERTY(double airQuality
+               READ airQuality
+               NOTIFY dataParsed)
+    Q_PROPERTY(double carbonMonoxide
+               READ carbonMonoxide
                NOTIFY dataParsed)
     Q_PROPERTY(quint32 checksum
                READ checksum
@@ -118,20 +121,22 @@ public:
     quint64 missionTime() const;
 
     double altitude() const;
-    double temperature() const;
+    double airQuality() const;
+    double carbonMonoxide() const;
+    double intTemperature() const;
+    double extTemperature() const;
     double batteryVoltage() const;
-    double relativeHumidity() const;
-    double uvRadiationIndex() const;
     double atmosphericPressure() const;
 
+    bool parachuteStatus() const;
+
     QString gpsTime() const;
-    double gpsVelocity() const;
     double gpsAltitude() const;
     double gpsLatitude() const;
     double gpsLongitude() const;
     int gpsSatelliteCount() const;
 
-    QVector3D gyroscopeData() const;
+    QVector3D magnetomerData() const;
     QVector3D accelerometerData() const;
 
     quint32 checksum() const;
