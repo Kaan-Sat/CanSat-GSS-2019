@@ -71,7 +71,7 @@ ColumnLayout {
         //
         ComboBox {
             id: devices
-            Layout.preferredWidth: 156
+            Layout.preferredWidth: 196
             model: CSerialManager.serialDevices
             enabled: CSerialManager.serialDevices.length > 1
             onCurrentIndexChanged: CSerialManager.startComm(currentIndex)
@@ -90,6 +90,7 @@ ColumnLayout {
         ComboBox {
             id: baudRate
             currentIndex: 3
+            enabled: CSerialManager.serialDevices.length > 1
             onCurrentIndexChanged: CSerialManager.setBaudRate(model[currentIndex])
 
             model: [

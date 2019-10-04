@@ -354,9 +354,9 @@ void SerialManager::refreshSerialDevices() {
     QStringList devices;
     devices.append(tr("Select Port"));
 
-    // Search for serail devices
+    // Search for serial devices
     foreach(QSerialPortInfo port, QSerialPortInfo::availablePorts()) {
-        if (port.isValid() && !port.description().isEmpty())
+        if (!port.description().isEmpty() && !port.isNull())
             devices.append(port.portName());
     }
 

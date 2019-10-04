@@ -49,7 +49,7 @@ ApplicationWindow {
     x: 100
     y: 100
     title: AppName
-    minimumWidth: 1024
+    minimumWidth: 1142
     minimumHeight: 580
     width: minimumWidth
     height: minimumHeight
@@ -117,7 +117,7 @@ ApplicationWindow {
     //
     Image {
         sourceSize.width: 120
-        source: "qrc:/images/unaq.png"
+        source: "qrc:/images/unaq.svg"
 
         anchors {
             top: parent.top
