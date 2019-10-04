@@ -38,9 +38,10 @@ RowLayout {
     }
 
     Label {
+        font.bold: true
         color: "#72d5a3"
         text: title + ":"
-        font.pixelSize: 12
+        font.pixelSize: 13
         Layout.fillWidth: false
         Layout.fillHeight: true
         font.family: app.monoFont
@@ -48,8 +49,9 @@ RowLayout {
     }
 
     Label {
+        opacity: 0.85
         color: "#72d5a3"
-        font.pixelSize: 12
+        font.pixelSize: 13
         Layout.fillWidth: false
         Layout.fillHeight: true
         font.family: app.monoFont

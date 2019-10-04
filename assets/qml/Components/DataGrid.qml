@@ -46,7 +46,7 @@ GridLayout {
             border.width: 2
             anchors.fill: parent
             anchors.topMargin: 32
-            border.color: "#858585"
+            border.color: "#646464"
         }
 
         ColumnLayout {
@@ -109,7 +109,7 @@ GridLayout {
             border.width: 2
             anchors.fill: parent
             anchors.topMargin: 32
-            border.color: "#858585"
+            border.color: "#646464"
         }
 
         ColumnLayout {
@@ -140,13 +140,13 @@ GridLayout {
             }
 
             DataLabel {
-                units: "?"
+                units: "%"
                 title: qsTr("Air Quality")
                 dataset: CDataParser.airQuality
             }
 
             DataLabel {
-                units: "?"
+                units: "%"
                 title: qsTr("Carbon Monoxide")
                 dataset: CDataParser.carbonMonoxide
             }
@@ -168,7 +168,7 @@ GridLayout {
             border.width: 2
             anchors.fill: parent
             anchors.topMargin: 32
-            border.color: "#858585"
+            border.color: "#646464"
         }
 
         ColumnLayout {
@@ -210,7 +210,7 @@ GridLayout {
             border.width: 2
             anchors.fill: parent
             anchors.topMargin: 32
-            border.color: "#858585"
+            border.color: "#646464"
         }
 
         ColumnLayout {
@@ -252,7 +252,7 @@ GridLayout {
             border.width: 2
             anchors.fill: parent
             anchors.topMargin: 32
-            border.color: "#858585"
+            border.color: "#646464"
         }
 
         ColumnLayout {
@@ -302,7 +302,7 @@ GridLayout {
             border.width: 2
             anchors.fill: parent
             anchors.topMargin: 32
-            border.color: "#858585"
+            border.color: "#646464"
         }
 
         ColumnLayout {

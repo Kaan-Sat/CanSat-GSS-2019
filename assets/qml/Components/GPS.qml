@@ -129,7 +129,7 @@ ColumnLayout {
 
         border {
             width: 2
-            color: "#858585"
+            color: "#646464"
         }
 
         Map {

@@ -30,6 +30,7 @@ import "Modules"
 ColumnLayout {
     id: ui
     spacing: app.spacing
+    property alias fullscreen: fullscreenBt.checked
 
     //
     // Toolbar
@@ -143,6 +144,7 @@ ColumnLayout {
         // Full screen button
         //
         Button {
+            id: fullscreenBt
             background: Item {}
 
             Rectangle {

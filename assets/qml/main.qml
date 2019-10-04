@@ -50,23 +50,25 @@ ApplicationWindow {
     y: 100
     title: AppName
     minimumWidth: 1024
-    minimumHeight: 680
+    minimumHeight: 580
     width: minimumWidth
     height: minimumHeight
 
     //
     // Show application window
     //
-    Component.onCompleted: app.showNormal()
+    Component.onCompleted: ui.fullscreen ? app.showFullScreen() :
+                                           app.showNormal()
 
     //
-    // Guardar posición y tamaño de la ventana automáticamente
+    // Save window size on exit
     //
     Settings {
         property alias _x: app.x
         property alias _y: app.y
         property alias _w: app.width
         property alias _h: app.height
+        property alias _f: ui.fullscreen
     }
 
     //
@@ -105,6 +107,7 @@ ApplicationWindow {
     // UI module
     //
     UI {
+        id: ui
         anchors.fill: parent
         anchors.margins: app.spacing
     }

@@ -31,7 +31,7 @@ Rectangle {
     color: "transparent"
     border {
         width: 2
-        color: "#858585"
+        color: "#646464"
     }
 
     //
@@ -62,7 +62,7 @@ Rectangle {
         // GPS Map & Terminal
         //
         ColumnLayout {
-            Layout.fillWidth: false
+            Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.margins: app.spacing
 
@@ -79,7 +79,7 @@ Rectangle {
                     border.width: 2
                     anchors.fill: parent
                     anchors.topMargin: 32
-                    border.color: "#858585"
+                    border.color: "#646464"
                 }
 
                 ColumnLayout {
@@ -105,7 +105,7 @@ Rectangle {
         // Sensor readings
         //
         DataGrid {
-            Layout.fillWidth: true
+            Layout.fillWidth: false
             Layout.fillHeight: true
             Layout.margins: app.spacing
         }
