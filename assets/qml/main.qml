@@ -55,6 +55,11 @@ ApplicationWindow {
     height: minimumHeight
 
     //
+    // Show application window
+    //
+    Component.onCompleted: app.showNormal()
+
+    //
     // Guardar posición y tamaño de la ventana automáticamente
     //
     Settings {
@@ -82,8 +87,10 @@ ApplicationWindow {
     //
     // Background
     //
-    background: Rectangle {
-        color: "#1a1a1a"
+    background: Image {
+        opacity: 0.72
+        fillMode: Image.PreserveAspectCrop
+        source: "qrc:/images/background.jpg"
     }
 
     //
@@ -100,6 +107,20 @@ ApplicationWindow {
     UI {
         anchors.fill: parent
         anchors.margins: app.spacing
+    }
+
+    //
+    // Logo UNAQ
+    //
+    Image {
+        sourceSize.width: 120
+        source: "qrc:/images/unaq.png"
+
+        anchors {
+            top: parent.top
+            margins: app.spacing
+            horizontalCenter: parent.horizontalCenter
+        }
     }
 
     //

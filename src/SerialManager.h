@@ -68,6 +68,7 @@ public:
     bool connected() const;
     bool fileLoggingEnabled() const;
 
+    QString deviceName() const;
     QString receivedBytes() const;
     QStringList serialDevices() const;
 

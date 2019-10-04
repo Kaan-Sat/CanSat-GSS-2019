@@ -66,48 +66,6 @@ ColumnLayout {
         }
 
         //
-        // Module selector
-        //
-        RowLayout {
-            spacing: 1
-            Layout.maximumWidth: app.width / 3
-
-            Button {
-                Layout.fillWidth: true
-                highlighted: swipeView.currentIndex === 0
-                onClicked: swipeView.currentIndex = 0
-                icon.source: "qrc:/icons/dashboard.svg"
-            }
-
-            Button {
-                Layout.fillWidth: true
-                highlighted: swipeView.currentIndex === 1
-                onClicked: swipeView.currentIndex = 1
-                icon.source: "qrc:/icons/terminal.svg"
-            }
-
-            Button {
-                Layout.fillWidth: true
-                highlighted: swipeView.currentIndex === 2
-                onClicked: swipeView.currentIndex = 2
-                icon.source: "qrc:/icons/settings.svg"
-            }
-
-            Button {
-                Layout.fillWidth: true
-                icon.source: "qrc:/icons/csv.svg"
-                enabled: CDataParser.csvLoggingEnabled
-            }
-        }
-
-        //
-        // Spacer
-        //
-        Item {
-            Layout.fillWidth: true
-        }
-
-        //
         // Serial port selector
         //
         ComboBox {
@@ -126,37 +84,122 @@ ColumnLayout {
         }
 
         //
+        // Baud rate selector
+        //
+        ComboBox {
+            id: baudRate
+            currentIndex: 3
+            onCurrentIndexChanged: CSerialManager.setBaudRate(model[currentIndex])
+
+            model: [
+                1200,
+                2400,
+                4800,
+                9600,
+                19200,
+                38400,
+                57600,
+                15200,
+            ]
+        }
+
+        //
+        // Spacer
+        //
+        Item {
+            width: app.spacing
+        }
+
+        //
+        // CSV table button
+        //
+        Button {
+            background: Item {}
+
+            Rectangle {
+                width: 32
+                height: 32
+                radius: width / 2
+                anchors.centerIn: parent
+                color: Qt.rgba(35/255, 209/255, 75/255, 1)
+
+                border.width: 1
+                border.color: Qt.rgba(0, 0, 0, 0.21)
+            }
+
+            icon.source: "qrc:/icons/csv.svg"
+            icon.color: Qt.rgba(0, 0, 0, 0.42)
+            onClicked: CDataParser.openCsvFile()
+        }
+
+        //
+        // Spacer
+        //
+        Item {
+            width: app.spacing
+        }
+
+        //
+        // Full screen button
+        //
+        Button {
+            background: Item {}
+
+            Rectangle {
+                width: 32
+                height: 32
+                radius: width / 2
+                anchors.centerIn: parent
+                color: Qt.rgba(229/255, 193/255, 58/255, 1)
+
+                border.width: 1
+                border.color: Qt.rgba(0, 0, 0, 0.21)
+            }
+
+            checkable: true
+            icon.color: Qt.rgba(0, 0, 0, 0.42)
+            onClicked: checked ? app.showFullScreen() : app.showNormal()
+            icon.source: checked ? "qrc:/icons/fullscreen-exit.svg" :
+                                   "qrc:/icons/fullscreen.svg"
+        }
+
+        //
+        // Spacer
+        //
+        Item {
+            width: app.spacing
+        }
+
+        //
         // Close button
         //
         Button {
-            highlighted: true
+            background: Item {}
+
+            Rectangle {
+                width: 32
+                height: 32
+                radius: width / 2
+                anchors.centerIn: parent
+                color: Qt.rgba(246/255, 82/255, 82/255, 1)
+
+                border.width: 1
+                border.color: Qt.rgba(0, 0, 0, 0.21)
+            }
+
             onClicked: app.close()
-            Universal.accent: Universal.Red
             icon.source: "qrc:/icons/exit.svg"
+            icon.color: Qt.rgba(0, 0, 0, 0.42)
         }
     }
 
     //
-    // UI modules
+    // Dashboard
     //
-    SwipeView {
-        id: swipeView
-        interactive: false
-        spacing: app.spacing
+    Dashboard {
+        id: dashboard
         Layout.fillWidth: true
         Layout.fillHeight: true
-
-        Dashboard {
-            id: dashboard
-        }
-
-        Logger {
-            id: logger
-        }
-
-        Configuration {
-            id: configuration
-        }
     }
 
     //

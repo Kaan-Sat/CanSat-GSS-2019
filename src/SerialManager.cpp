@@ -111,6 +111,17 @@ bool SerialManager::fileLoggingEnabled() const {
 }
 
 /**
+ * @brief SerialManager::deviceName
+ * @return
+ */
+QString SerialManager::deviceName() const {
+    if (m_port)
+        return m_port->portName();
+
+    return "Undefined";
+}
+
+/**
  * @returns An user-friendly string that represents the number of bytes
  *          received from the current serial device.
  */

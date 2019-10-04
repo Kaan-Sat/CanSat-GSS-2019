@@ -77,37 +77,4 @@ static inline double RoundDbl(const double n) {
     return floorl(n * 100.0) / 100.0;
 }
 
-/**
- * Definition of data position indexes, do not alter the order of the
- * enums unless you know what you are doing.
- */
-typedef enum {
-    kHeader,
-    kTeamID,
-    kPacketCount,
-    kAltitude,
-    kAtmPressure,
-    kBatteryVoltage,
-    kIntTemperature,
-    kExtTemperature,
-    kAirQuality,
-    kCarbonMonoxide,
-    kGpsTime,
-    kGpsLongitudeDeg,
-    kGpsLongitudeMin,
-    kGpsLatitudeDeg,
-    kGpsLatitudeMin,
-    kGpsAltitude,
-    kGpsSatelliteCount,
-    kAccelerometerX,
-    kAccelerometerY,
-    kAccelerometerZ,
-    kMagnetometerX,
-    kMagnetometerY,
-    kMagnetometerZ,
-    kMisionTime,
-    kParachute,
-    kChecksumCode
-} DataPosition;
-
 #endif

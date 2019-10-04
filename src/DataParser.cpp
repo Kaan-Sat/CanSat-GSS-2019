@@ -25,13 +25,16 @@
 #include "DataParser.h"
 #include "SerialManager.h"
 
+#include <QMessageBox>
+#include <QDesktopServices>
+
 /**
  * Generates a vector of 0-value @c QVariant with @c x elements, where @c x
  * is the number of data/readings/status variables sent by the CanSat
  */
 static QVector<QVariant> EmptyDataPacket() {
     QVector<QVariant> packet;
-    const int packetItems = static_cast<int>(kChecksumCode);
+    const int packetItems = static_cast<int>(DataParser::kChecksumCode);
 
     for (int i = 0; i < packetItems; ++i)
         packet.append(QVariant(0));
@@ -61,6 +64,14 @@ DataParser::DataParser() :
              this, &DataParser::onSatelliteReset);
     connect (this, &DataParser::packetError,
              this, &DataParser::onPacketError);
+}
+
+/**
+ * Class destructor function, closes the CSV log file before quiting the app
+ */
+DataParser::~DataParser() {
+    if (m_csvFile.isOpen())
+        m_csvFile.close();
 }
 
 /**
@@ -259,6 +270,14 @@ void DataParser::resetData() {
 }
 
 /**
+ * Opens the CSV file using the system's default CSV editor app
+ */
+void DataParser::openCsvFile() {
+    if (csvLoggingEnabled())
+        QDesktopServices::openUrl(QUrl::fromLocalFile(m_csvFile.fileName()));
+}
+
+/**
  * @brief Enables or disables CSV logging
  *
  * If CSV logging is enabled, then all the packets that have been received
@@ -268,6 +287,10 @@ void DataParser::resetData() {
  */
 void DataParser::enableCsvLogging(const bool enabled) {
     m_csvLoggingEnabled = enabled;
+
+    if (!csvLoggingEnabled() && m_csvFile.isOpen())
+        m_csvFile.close();
+
     emit csvLoggingEnabledChanged();
 }
 
@@ -413,7 +436,7 @@ void DataParser::parsePacket(const QByteArray& packet) {
         // a satellite reset ocurred
         if (missionTime() >= info.at(kMisionTime).toUInt())
             emit satelliteReset();
-        
+
         // If received packet ID is smaller than the last packet ID, then a
         // satellite reset has ocurred.
         else if (packetCount() >= info.at(kPacketCount).toInt())
@@ -455,7 +478,61 @@ void DataParser::onSatelliteReset() {
  */
 void DataParser::saveCsvData() {
     if (csvLoggingEnabled()) {
-        // Gagaga :(
+        // Open CSV file
+        if (!m_csvFile.isOpen()) {
+            // Get file name and path
+            QString format = QDateTime::currentDateTime().toString("yyyy/MMM/dd/");
+            QString fileName = QDateTime::currentDateTime().toString("HH-mm-ss") + ".csv";
+            QString path = QString("%1/%2/%3/%4").arg(
+                        QDir::homePath(),
+                        qApp->applicationName(),
+                        SerialManager::getInstance()->deviceName(),
+                        format);
+
+            // Generate file path if required
+            QDir dir(path);
+            if (!dir.exists())
+                dir.mkpath(".");
+
+            // Open file
+            m_csvFile.setFileName(dir.filePath(fileName));
+            if (!m_csvFile.open(QFile::WriteOnly)) {
+                QMessageBox::critical(NULL,
+                                      tr("CSV File Error"),
+                                      tr("Cannot open CSV file for writing!"),
+                                      QMessageBox::Ok);
+                return;
+            }
+
+            // Add CSV data headers
+            for (int i = 0; i < EmptyDataPacket().length(); ++i) {
+                // Convert enum value to QString and write it to current cell
+                m_csvFile.write(QMetaEnum::fromType<DataPosition>().valueToKey(i));
+
+                // Go to the next column
+                if (i < EmptyDataPacket().length() - 1)
+                    m_csvFile.write(",");
+
+                // Create a new row
+                else
+                    m_csvFile.write("\n");
+            }
+
+        }
+
+        // Write current data to CSV file
+        for (int i = 0; i < EmptyDataPacket().length(); ++i) {
+            // Write UTF8 data to current cell
+            m_csvFile.write(m_data.at(i).toByteArray());
+
+            // Go to next column
+            if (i < EmptyDataPacket().length() - 1)
+                m_csvFile.write(",");
+
+            // Create a new row
+            else
+                m_csvFile.write("\n");
+        }
     }
 }
 

@@ -24,11 +24,14 @@
 #define DATA_PARSER_H
 
 #include <QList>
+#include <QFile>
 #include <QVector>
 #include <QObject>
 #include <QVariant>
 #include <QVector3D>
 #include <QDateTime>
+
+#include "Constants.h"
 
 class DataParser : public QObject {
     Q_OBJECT
@@ -103,6 +106,37 @@ class DataParser : public QObject {
                READ successCount
                NOTIFY dataParsed)
 
+public:
+    enum DataPosition {
+        kHeader,
+        kTeamID,
+        kPacketCount,
+        kAltitude,
+        kAtmPressure,
+        kBatteryVoltage,
+        kIntTemperature,
+        kExtTemperature,
+        kAirQuality,
+        kCarbonMonoxide,
+        kGpsTime,
+        kGpsLongitudeDeg,
+        kGpsLongitudeMin,
+        kGpsLatitudeDeg,
+        kGpsLatitudeMin,
+        kGpsAltitude,
+        kGpsSatelliteCount,
+        kAccelerometerX,
+        kAccelerometerY,
+        kAccelerometerZ,
+        kMagnetometerX,
+        kMagnetometerY,
+        kMagnetometerZ,
+        kMisionTime,
+        kParachute,
+        kChecksumCode
+    };
+    Q_ENUM(DataPosition);
+
 signals:
     void dataParsed();
     void packetError();
@@ -111,6 +145,7 @@ signals:
 
 public:
     DataParser();
+    ~DataParser();
 
     int resetCount() const;
     int errorCount() const;
@@ -144,6 +179,7 @@ public:
 
 public slots:
     void resetData();
+    void openCsvFile();
     void enableCsvLogging(const bool enabled);
 
 private slots:
@@ -154,6 +190,7 @@ private slots:
     void parsePacket(const QByteArray &data);
 
 private:
+    QFile m_csvFile;
     quint32 m_crc32;
     int m_resetCount;
     int m_errorCount;

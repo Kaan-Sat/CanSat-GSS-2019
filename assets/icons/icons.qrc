@@ -1,14 +1,9 @@
 <RCC>
     <qresource prefix="/icons">
-        <file>settings.svg</file>
-        <file>terminal.svg</file>
         <file>csv.svg</file>
-        <file>dashboard.svg</file>
-        <file>open.svg</file>
-        <file>clear.svg</file>
-        <file>reset.svg</file>
-        <file>map.svg</file>
         <file>location.svg</file>
         <file>exit.svg</file>
+        <file>fullscreen-exit.svg</file>
+        <file>fullscreen.svg</file>
     </qresource>
 </RCC>

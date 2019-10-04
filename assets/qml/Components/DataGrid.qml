@@ -28,7 +28,7 @@ GridLayout {
     id: dataGrid
 
     columns: 2
-    rowSpacing: app.spacing
+    rowSpacing: app.spacing * 2
     columnSpacing: app.spacing
 
     //
@@ -39,6 +39,15 @@ GridLayout {
         title: "// " + qsTr("Mission Status")
         Layout.fillWidth: true
         Layout.fillHeight: true
+
+        background: Rectangle {
+            color: "#000"
+            opacity: 0.75
+            border.width: 2
+            anchors.fill: parent
+            anchors.topMargin: 32
+            border.color: "#858585"
+        }
 
         ColumnLayout {
             spacing: app.spacing
@@ -94,6 +103,15 @@ GridLayout {
         Layout.fillWidth: true
         Layout.fillHeight: true
 
+        background: Rectangle {
+            color: "#000"
+            opacity: 0.75
+            border.width: 2
+            anchors.fill: parent
+            anchors.topMargin: 32
+            border.color: "#858585"
+        }
+
         ColumnLayout {
             anchors.centerIn: parent
 
@@ -144,6 +162,15 @@ GridLayout {
         Layout.fillWidth: true
         Layout.fillHeight: true
 
+        background: Rectangle {
+            color: "#000"
+            opacity: 0.75
+            border.width: 2
+            anchors.fill: parent
+            anchors.topMargin: 32
+            border.color: "#858585"
+        }
+
         ColumnLayout {
             spacing: app.spacing
             anchors.centerIn: parent
@@ -177,6 +204,15 @@ GridLayout {
         Layout.fillWidth: true
         Layout.fillHeight: true
 
+        background: Rectangle {
+            color: "#000"
+            opacity: 0.75
+            border.width: 2
+            anchors.fill: parent
+            anchors.topMargin: 32
+            border.color: "#858585"
+        }
+
         ColumnLayout {
             spacing: app.spacing
             anchors.centerIn: parent
@@ -206,9 +242,18 @@ GridLayout {
     //
     GroupBox {
         font.family: app.monoFont
-        title: "// " + qsTr("GPS")
+        title: "// " + qsTr("GPS Data")
         Layout.fillWidth: true
         Layout.fillHeight: true
+
+        background: Rectangle {
+            color: "#000"
+            opacity: 0.75
+            border.width: 2
+            anchors.fill: parent
+            anchors.topMargin: 32
+            border.color: "#858585"
+        }
 
         ColumnLayout {
             spacing: app.spacing
@@ -250,6 +295,15 @@ GridLayout {
         title: "// " + qsTr("Satellite Health")
         Layout.fillWidth: true
         Layout.fillHeight: true
+
+        background: Rectangle {
+            color: "#000"
+            opacity: 0.75
+            border.width: 2
+            anchors.fill: parent
+            anchors.topMargin: 32
+            border.color: "#858585"
+        }
 
         ColumnLayout {
             spacing: app.spacing

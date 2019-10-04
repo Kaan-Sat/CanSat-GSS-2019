@@ -21,85 +21,94 @@
  */
 
 import QtQuick 2.0
+import QtCharts 2.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls 2.4
 import QtQuick.Controls.Universal 2.0
 
 import "../Components"
 
-ColumnLayout {
-    spacing: app.spacing
-
-    //
-    // Title
-    //
-    RowLayout {
-        spacing: app.spacing
-        Layout.fillWidth: true
-
-        Label {
-            font.pixelSize: 24
-            text: qsTr("Dashboard")
-        }
-
-        Item {
-            Layout.fillWidth: true
-        }
-
-        Button {
-            text: qsTr("Reset Data")
-            onClicked: CDataParser.resetData()
-            icon.source: "qrc:/icons/reset.svg"
-        }
+Rectangle {
+    color: "transparent"
+    border {
+        width: 2
+        color: "#858585"
     }
 
     //
-    // HUD
+    // Background rectangle
     //
     Rectangle {
-        id: rect
-        Layout.fillWidth: true
-        Layout.fillHeight: true
+        opacity: 0.75
+        anchors.fill: parent
         color: Universal.background
+        anchors.margins: parent.border.width
+    }
 
-        border {
-            width: 2
-            color: "#858585"
+    //
+    // Main layout
+    //
+    RowLayout {
+        spacing: app.spacing
+
+        //
+        // Anchors
+        //
+        anchors {
+            fill: parent
+            margins: app.spacing
         }
 
-        RowLayout {
-            spacing: app.spacing
+        //
+        // GPS Map & Terminal
+        //
+        ColumnLayout {
+            Layout.fillWidth: false
+            Layout.fillHeight: true
+            Layout.margins: app.spacing
 
-            anchors {
-                fill: parent
-                margins: app.spacing
-            }
-
-            //
-            // 'CanSat' heartbeat
-            //
             GroupBox {
-                Layout.fillWidth: false
-                Layout.fillHeight: true
-                font.family: app.monoFont
-                Layout.margins: app.spacing
-                title: "// " + qsTr("GPS Map")
-
-                GpsMap {
-                    anchors.fill: parent
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                }
-            }
-
-            //
-            // Sensor readings
-            //
-            DataGrid {
+                Layout.margins: 0
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.margins: app.spacing
+                font.family: app.monoFont
+                title: "// " + qsTr("GPS Map & Raw Frame Data")
+
+                background: Rectangle {
+                    color: "#000"
+                    opacity: 0.75
+                    border.width: 2
+                    anchors.fill: parent
+                    anchors.topMargin: 32
+                    border.color: "#858585"
+                }
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    spacing: app.spacing
+
+                    GPS {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                    }
+
+                    Terminal {
+                        opacity: 0.75
+                        Layout.margins: 0
+                        Layout.fillWidth: true
+                        Layout.minimumHeight: 196
+                    }
+                }
             }
+        }
+
+        //
+        // Sensor readings
+        //
+        DataGrid {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.margins: app.spacing
         }
     }
 }

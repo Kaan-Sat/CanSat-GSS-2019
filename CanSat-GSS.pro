@@ -58,6 +58,12 @@ win32* {
     RC_FILE = deploy/windows/resources/info.rc
 }
 
+macx* {
+    ICON = deploy/mac-osx/icon.icns
+    RC_FILE = deploy/mac-osx/icon.icns
+    QMAKE_INFO_PLIST = deploy/mac-osx/info.plist
+}
+
 linux:!android {
     target.path = /usr/bin
     icon.path = /usr/share/pixmaps
@@ -67,7 +73,6 @@ linux:!android {
 
     INSTALLS += target desktop icon
 }
-
 
 #-------------------------------------------------------------------------------
 # Import source code

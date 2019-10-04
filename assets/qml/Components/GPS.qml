@@ -140,16 +140,6 @@ ColumnLayout {
             anchors.margins: parent.border.width
             zoomLevel: (map.minimumZoomLevel + map.maximumZoomLevel) / 2
 
-            Image {
-                sourceSize.width: 120
-                source: "qrc:/images/unaq.png"
-                anchors {
-                    margins: app.spacing
-                    left: parent.left
-                    bottom: parent.bottom
-                }
-            }
-
             MapQuickItem {
                 sourceItem: Rectangle {
                     id: dot

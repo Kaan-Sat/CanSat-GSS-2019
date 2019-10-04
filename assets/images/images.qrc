@@ -1,7 +1,7 @@
 <RCC>
     <qresource prefix="/images">
         <file>kaansat.svg</file>
-        <file>satellite.svg</file>
         <file>unaq.png</file>
+        <file>background.jpg</file>
     </qresource>
 </RCC>

@@ -39,18 +39,26 @@
  * @returns the exit status of the @c qApp event loop
  */
 int main(int argc, char** argv) {
+    // Configure application flags
     QGuiApplication::setApplicationName(APP_NAME);
     QGuiApplication::setApplicationVersion(APP_VERSION);
     QGuiApplication::setOrganizationName(ORGANIZATION_NAME);
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
+    // Create application controller
     QGuiApplication app(argc, argv);
 
+    // Create application modules
     DataParser parser;
     AppQuiter appQuiter;
     QQmlApplicationEngine engine;
     QQuickStyle::setStyle("Universal");
 
+    // Enable file logging for CSV and serial data
+    parser.enableCsvLogging(true);
+    SerialManager::getInstance()->enableFileLogging(true);
+
+    // Configure QML engine context properties
     engine.rootContext()->setContextProperty("AppName", app.applicationName());
     engine.rootContext()->setContextProperty("AppCompany", app.organizationName());
     engine.rootContext()->setContextProperty("AppVersion", app.applicationVersion());
@@ -59,8 +67,10 @@ int main(int argc, char** argv) {
     engine.rootContext()->setContextProperty("CSerialManager", SerialManager::getInstance());
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
+    // Exit if QML interface contains errors
     if (engine.rootObjects().isEmpty())
         return EXIT_FAILURE;
 
+    // Enter application event loop
     return app.exec();
 }

@@ -27,35 +27,10 @@ import QtQuick.Controls.Universal 2.0
 
 Item {
     //
-    // Custom properties
-    //
-    property int scrollback: 100
-    property bool autoScroll: true
-    property alias text: _textDisplay.text
-    property alias textContainer: _textDisplay
-
-    //
-    // Appends the given string to the text and scrolls
-    // the view to the bottom
-    //
-    function append(str) {
-        text += str
-        if (autoScroll)
-            textContainer.cursorPosition = textContainer.length
-    }
-
-    //
-    // Clears the current buffer
-    //
-    function clear() {
-        text = ""
-    }
-
-    //
     // Text display
     //
     TextArea {
-        id: _textDisplay
+        id: textArea
         readOnly: true
         color: "#72d5a3"
         font.pixelSize: 12
@@ -64,10 +39,21 @@ Item {
         textFormat: Text.PlainText
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         placeholderText: qsTr("No data received so far") + "..."
+    }
 
-        onLineCountChanged: {
-            if (lineCount > scrollback)
-                remove(0, length / 2)
-        }
+    //
+    // Display serial data
+    //
+    Connections {
+        target: CSerialManager
+    }
+
+    //
+    // Mouse area to stop user from interacting with console
+    //
+    MouseArea {
+        enabled: true
+        hoverEnabled: true
+        anchors.fill: parent
     }
 }
