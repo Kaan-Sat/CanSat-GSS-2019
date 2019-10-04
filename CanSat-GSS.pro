@@ -43,9 +43,13 @@ CONFIG += resources_big
 
 QT += xml
 QT += svg
+QT += sql
 QT += core
 QT += quick
+QT += location
+QT += concurrent
 QT += serialport
+QT += positioning
 QT += quickcontrols2
 
 QTPLUGIN += qsvg
@@ -62,6 +66,7 @@ macx* {
     ICON = deploy/mac-osx/icon.icns
     RC_FILE = deploy/mac-osx/icon.icns
     QMAKE_INFO_PLIST = deploy/mac-osx/info.plist
+    QMAKE_POST_LINK = macdeployqt cansat-gss.app -qmldir=$$PWD/assets/qml
 }
 
 linux:!android {
