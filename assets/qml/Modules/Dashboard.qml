@@ -71,7 +71,7 @@ Rectangle {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 font.family: app.monoFont
-                title: "// " + qsTr("GPS Map & Raw Frame Data")
+                title: "// " + qsTr("GPS Map & Raw Frame Data") + Translator.dummy
 
                 background: Rectangle {
                     color: "#000"

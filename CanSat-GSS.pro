@@ -55,6 +55,14 @@ QT += quickcontrols2
 QTPLUGIN += qsvg
 
 #-------------------------------------------------------------------------------
+# Translations
+#-------------------------------------------------------------------------------
+
+TRANSLATIONS += \
+    assets/translations/en.ts \
+    assets/translations/es.ts
+
+#-------------------------------------------------------------------------------
 # Deploy options
 #-------------------------------------------------------------------------------
 
@@ -89,13 +97,15 @@ HEADERS += \
     src/SerialManager.h \
     src/crc32.h \
     src/Constants.h \
-    src/AppQuiter.h
+    src/AppQuiter.h \
+    src/Translator.h
 
 SOURCES += \
     src/DataParser.cpp \
     src/main.cpp \
     src/SerialManager.cpp \
-    src/crc32.c
+    src/crc32.c \
+    src/Translator.cpp
 
 DISTFILES += \
     assets/qml/Components/ComConsole.qml \
@@ -115,4 +125,5 @@ RESOURCES += \
     assets/qml/qml.qrc \
     assets/images/images.qrc \
     assets/icons/icons.qrc \
-    assets/fonts/fonts.qrc
+    assets/fonts/fonts.qrc \
+    assets/translations/translations.qrc

@@ -113,7 +113,7 @@ ColumnLayout {
         }
 
         Button {
-            text: qsTr("Re-center")
+            text: qsTr("Re-center") + Translator.dummy
             icon.source: "qrc:/icons/location.svg"
             onClicked: centerMap()
         }

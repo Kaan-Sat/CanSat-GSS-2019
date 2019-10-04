@@ -38,7 +38,7 @@ Item {
         font.family: app.monoFont
         textFormat: Text.PlainText
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-        placeholderText: qsTr("No data received so far") + "..."
+        placeholderText: qsTr("No data received so far") + "..." + Translator.dummy
     }
 
     //

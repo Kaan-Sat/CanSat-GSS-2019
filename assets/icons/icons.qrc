@@ -5,5 +5,7 @@
         <file>exit.svg</file>
         <file>fullscreen-exit.svg</file>
         <file>fullscreen.svg</file>
+        <file>mexico.svg</file>
+        <file>united-states.svg</file>
     </qresource>
 </RCC>

@@ -30,6 +30,7 @@ import "Modules"
 ColumnLayout {
     id: ui
     spacing: app.spacing
+    property alias language: langBt.checked
     property alias fullscreen: fullscreenBt.checked
 
     //
@@ -109,7 +110,37 @@ ColumnLayout {
         // Spacer
         //
         Item {
-            width: app.spacing
+            width: 2 * app.spacing
+        }
+
+        //
+        // Language button
+        //
+        MouseArea {
+            width: 32
+            height: 32
+
+            id: langBt
+            property bool checked: Translator.language == 1
+
+            onClicked: {
+                checked = !checked
+                Translator.setLanguage(checked ? 1 : 0)
+            }
+
+            Image {
+                sourceSize.width: 32
+                anchors.centerIn: parent
+                source: parent.checked ? "qrc:/icons/mexico.svg" :
+                                         "qrc:/icons/united-states.svg"
+            }
+        }
+
+        //
+        // Spacer
+        //
+        Item {
+            width: 2 * app.spacing
         }
 
         //
@@ -259,8 +290,8 @@ ColumnLayout {
 
             onConnectionError: {
                 dialog.error = true
-                dialog.title = qsTr("Warning")
-                description.text = qsTr("Disconnected from \"%1\"").arg(deviceName)
+                dialog.title = qsTr("Warning") + Translator.dummy
+                description.text = qsTr("Disconnected from \"%1\"").arg(deviceName) + Translator.dummy
                 dialog.open()
             }
         }

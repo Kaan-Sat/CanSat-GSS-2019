@@ -28,6 +28,7 @@
 #include "AppInfo.h"
 #include "AppQuiter.h"
 #include "DataParser.h"
+#include "Translator.h"
 #include "SerialManager.h"
 
 /**
@@ -51,8 +52,12 @@ int main(int argc, char** argv) {
     // Create application modules
     DataParser parser;
     AppQuiter appQuiter;
+    Translator translator;
     QQmlApplicationEngine engine;
     QQuickStyle::setStyle("Universal");
+
+    // Register QML modules
+    Translator::DeclareQML();
 
     // Enable file logging for CSV and serial data
     parser.enableCsvLogging(true);
@@ -64,6 +69,7 @@ int main(int argc, char** argv) {
     engine.rootContext()->setContextProperty("AppVersion", app.applicationVersion());
     engine.rootContext()->setContextProperty("CDataParser", &parser);
     engine.rootContext()->setContextProperty("CAppQuiter", &appQuiter);
+    engine.rootContext()->setContextProperty ("Translator", &translator);
     engine.rootContext()->setContextProperty("CSerialManager", SerialManager::getInstance());
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 

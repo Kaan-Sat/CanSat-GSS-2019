@@ -49,7 +49,7 @@ ApplicationWindow {
     x: 100
     y: 100
     title: AppName
-    minimumWidth: 1142
+    minimumWidth: 1222
     minimumHeight: 580
     width: minimumWidth
     height: minimumHeight
@@ -68,6 +68,7 @@ ApplicationWindow {
         property alias _y: app.y
         property alias _w: app.width
         property alias _h: app.height
+        property alias _l: ui.language
         property alias _f: ui.fullscreen
     }
 
@@ -159,12 +160,12 @@ ApplicationWindow {
         //
         // Message description
         //
-        title: qsTr("Exit confirmation")
+        title: qsTr("Exit confirmation") + Translator.dummy
         Label {
             anchors.fill: parent
             verticalAlignment: Qt.AlignTop
             horizontalAlignment: Qt.AlignLeft
-            text: qsTr("Are you sure you want to exit %1?").arg(AppName)
+            text: qsTr("Are you sure you want to exit %1?").arg(AppName) + Translator.dummy
         }
     }
 }

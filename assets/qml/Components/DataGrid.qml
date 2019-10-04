@@ -36,7 +36,7 @@ GridLayout {
     //
     GroupBox {
         font.family: app.monoFont
-        title: "// " + qsTr("Mission Status")
+        title: "// " + qsTr("Mission Status") + Translator.dummy
         Layout.fillWidth: true
         Layout.fillHeight: true
 
@@ -54,7 +54,7 @@ GridLayout {
             anchors.centerIn: parent
 
             DataLabel {
-                title: qsTr("Mission Time")
+                title: qsTr("Mission Time") + Translator.dummy
                 dataset: {
                     function pad(n) {
                         return (n < 10) ? ("0" + n) : n;
@@ -78,17 +78,17 @@ GridLayout {
             }
 
             DataLabel {
-                title: qsTr("Team ID")
+                title: qsTr("Team ID") + Translator.dummy
                 dataset: CDataParser.teamId
             }
 
             DataLabel {
-                title: qsTr("Parachute Status")
-                dataset: CDataParser.parachuteStatus ? qsTr("Open") : qsTr("Closed")
+                title: qsTr("Parachute Status") + Translator.dummy
+                dataset: (CDataParser.parachuteStatus ? qsTr("Open") : qsTr("Closed")) + Translator.dummy
             }
 
             DataLabel {
-                title: qsTr("Checksum")
+                title: qsTr("Checksum") + Translator.dummy
                 dataset: (CDataParser.checksum).toString(16)
             }
         }
@@ -99,7 +99,7 @@ GridLayout {
     //
     GroupBox {
         font.family: app.monoFont
-        title: "// " + qsTr("Sensor Readings")
+        title: "// " + qsTr("Sensor Readings") + Translator.dummy
         Layout.fillWidth: true
         Layout.fillHeight: true
 
@@ -117,37 +117,37 @@ GridLayout {
 
             DataLabel {
                 units: "m"
-                title: qsTr("Altitude")
+                title: qsTr("Altitude") + Translator.dummy
                 dataset: CDataParser.altitude
             }
 
             DataLabel {
                 units: "KPa"
-                title: qsTr("Pressure")
+                title: qsTr("Pressure") + Translator.dummy
                 dataset: CDataParser.atmosphericPressure / 1000.0
             }
 
             DataLabel {
                 units: "°C"
-                title: qsTr("Internal Temperature")
+                title: qsTr("Internal Temperature") + Translator.dummy
                 dataset: CDataParser.intTemperature
             }
 
             DataLabel {
                 units: "°C"
-                title: qsTr("External Temperature")
+                title: qsTr("External Temperature") + Translator.dummy
                 dataset: CDataParser.extTemperature
             }
 
             DataLabel {
                 units: "%"
-                title: qsTr("Air Quality")
+                title: qsTr("Air Quality") + Translator.dummy
                 dataset: CDataParser.airQuality
             }
 
             DataLabel {
                 units: "%"
-                title: qsTr("Carbon Monoxide")
+                title: qsTr("Carbon Monoxide") + Translator.dummy
                 dataset: CDataParser.carbonMonoxide
             }
         }
@@ -158,7 +158,7 @@ GridLayout {
     //
     GroupBox {
         font.family: app.monoFont
-        title: "// " + qsTr("Accelerometer")
+        title: "// " + qsTr("Accelerometer") + Translator.dummy
         Layout.fillWidth: true
         Layout.fillHeight: true
 
@@ -200,7 +200,7 @@ GridLayout {
     //
     GroupBox {
         font.family: app.monoFont
-        title: "// " + qsTr("Magnetometer")
+        title: "// " + qsTr("Magnetometer") + Translator.dummy
         Layout.fillWidth: true
         Layout.fillHeight: true
 
@@ -242,7 +242,7 @@ GridLayout {
     //
     GroupBox {
         font.family: app.monoFont
-        title: "// " + qsTr("GPS Data")
+        title: "// " + qsTr("GPS Data") + Translator.dummy
         Layout.fillWidth: true
         Layout.fillHeight: true
 
@@ -261,27 +261,27 @@ GridLayout {
 
             DataLabel {
                 units: "m"
-                title: qsTr("Altitude")
+                title: qsTr("Altitude") + Translator.dummy
                 dataset: CDataParser.gpsAltitude
             }
 
             DataLabel {
-                title: qsTr("Latitude")
+                title: qsTr("Latitude") + Translator.dummy
                 dataset: CDataParser.gpsLatitude
             }
 
             DataLabel {
-                title: qsTr("Longitude")
+                title: qsTr("Longitude") + Translator.dummy
                 dataset: CDataParser.gpsLongitude
             }
 
             DataLabel {
-                title: qsTr("Satellites")
+                title: qsTr("Satellites") + Translator.dummy
                 dataset: CDataParser.gpsSatelliteCount
             }
 
             DataLabel {
-                title: qsTr("GPS Time")
+                title: qsTr("GPS Time") + Translator.dummy
                 dataset: CDataParser.gpsTime
             }
         }
@@ -292,7 +292,7 @@ GridLayout {
     //
     GroupBox {
         font.family: app.monoFont
-        title: "// " + qsTr("Satellite Health")
+        title: "// " + qsTr("Satellite Health") + Translator.dummy
         Layout.fillWidth: true
         Layout.fillHeight: true
 
@@ -311,22 +311,22 @@ GridLayout {
 
             DataLabel {
                 units: "V"
-                title: qsTr("Voltage")
+                title: qsTr("Voltage") + Translator.dummy
                 dataset: CDataParser.voltage
             }
 
             DataLabel {
-                title: qsTr("Resets")
+                title: qsTr("Resets") + Translator.dummy
                 dataset: CDataParser.resetCount
             }
 
             DataLabel {
-                title: qsTr("Packet Errors")
+                title: qsTr("Packet Errors") + Translator.dummy
                 dataset: CDataParser.errorCount
             }
 
             DataLabel {
-                title: qsTr("Packets Parsed")
+                title: qsTr("Packets Parsed") + Translator.dummy
                 dataset: CDataParser.successCount
             }
         }
