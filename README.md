@@ -19,4 +19,4 @@ Alternativamente, abra una terminal (Linux/macOS) y ejecute los siguientes coman
 
 ## Licencia
 
-Este proyecto esta distribuido bajo los terminos y condiciones de la licencia MIT, para más información, haga clic [aquí](LICENCE).
+Este proyecto esta distribuido bajo los terminos y condiciones de la licencia MIT, para más información, haga clic [aquí](LICENSE.md).
