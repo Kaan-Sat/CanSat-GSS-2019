@@ -15,7 +15,7 @@ Alternativamente, abra una terminal (Linux/macOS) y ejecute los siguientes coman
         
 ## Autores
 
-- Alex Spataru ([https://github.com/alex-spataru](perfil de GitHub)).
+- Alex Spataru ((perfil de GitHub)[https://github.com/alex-spataru]).
 
 ## Licencia
 
